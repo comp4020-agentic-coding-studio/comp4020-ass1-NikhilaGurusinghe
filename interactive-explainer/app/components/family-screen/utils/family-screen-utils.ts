@@ -15,7 +15,7 @@ export const MEDICINE_COST: number = 30;
 // TODO placeholder HP effect for skipping a need / paying for medicine - tune
 // alongside the costs above
 export const SKIPPED_NEED_HP_PENALTY: number = 1;
-export const MEDICINE_HP_RECOVERY: number = 2;
+export const MEDICINE_HP_RECOVERY: number = 4;
 
 export function familyMemberHealthLabel(health: FamilyMemberHealth): string {
   switch (health) {
