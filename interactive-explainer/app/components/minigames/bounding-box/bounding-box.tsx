@@ -369,7 +369,9 @@ export default function BoundingBox() {
         timePerTask:
           subMinigameStatsTotals.timePerTask /
           subMinigameStatsRef.current.length,
-        salary: subMinigameStatsTotals.salary,
+        // money should be a whole number, even though the per-iteration
+        // stats it's summed from aren't
+        salary: Math.round(subMinigameStatsTotals.salary),
       };
 
       // goodbye :wave_emoji:
