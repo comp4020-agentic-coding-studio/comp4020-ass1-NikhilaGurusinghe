@@ -9,7 +9,7 @@ import {
 } from "@/app/game/state/game-manager";
 import type { MinigameStats } from "@/app/game/types/minigame-stats";
 import {
-  BoundingBoxAsset,
+  type BoundingBoxAsset,
   boundingBoxAssets,
   boundingBoxLabels,
 } from "./assets/bounding-box-assets";
@@ -91,9 +91,9 @@ export default function BoundingBox() {
     boundingBoxAssets.sort(() => Math.random() - 0.5).slice(0, maxIterations),
   );
   const [currIteration, setCurrIteration] = useState<number>(0);
-  const [currBoundingBoxes, setcurrBoundingBoxes] = useState<
-    BoundingBoxData[]
-  >([]);
+  const [currBoundingBoxes, setcurrBoundingBoxes] = useState<BoundingBoxData[]>(
+    [],
+  );
   const [draftBox, setDraftBox] = useState<DraftBox | null>(null);
   const [isTutorialVisible, setIsTutorialVisible] = useState<boolean>(true);
   const imageContainerRef = useRef<HTMLDivElement>(null);
@@ -120,7 +120,9 @@ export default function BoundingBox() {
       ((event.clientY - rect.top) / rect.height) * 100,
     );
 
-    setDraftBox(cornersToBox(startXPercent, startYPercent, startXPercent, startYPercent));
+    setDraftBox(
+      cornersToBox(startXPercent, startYPercent, startXPercent, startYPercent),
+    );
 
     function handlePointerMove(moveEvent: globalThis.PointerEvent): void {
       const xPercent: number = clampPercent(
@@ -130,7 +132,9 @@ export default function BoundingBox() {
         ((moveEvent.clientY - rect.top) / rect.height) * 100,
       );
 
-      setDraftBox(cornersToBox(startXPercent, startYPercent, xPercent, yPercent));
+      setDraftBox(
+        cornersToBox(startXPercent, startYPercent, xPercent, yPercent),
+      );
     }
 
     function handlePointerUp(upEvent: globalThis.PointerEvent): void {
@@ -218,14 +222,18 @@ export default function BoundingBox() {
     boxElement.setPointerCapture(event.pointerId);
 
     const rect: DOMRect = container.getBoundingClientRect();
-    const startXPercent: number = ((event.clientX - rect.left) / rect.width) * 100;
-    const startYPercent: number = ((event.clientY - rect.top) / rect.height) * 100;
+    const startXPercent: number =
+      ((event.clientX - rect.left) / rect.width) * 100;
+    const startYPercent: number =
+      ((event.clientY - rect.top) / rect.height) * 100;
     const originalX: number = originalBox.x;
     const originalY: number = originalBox.y;
 
     function handlePointerMove(moveEvent: globalThis.PointerEvent): void {
-      const xPercent: number = ((moveEvent.clientX - rect.left) / rect.width) * 100;
-      const yPercent: number = ((moveEvent.clientY - rect.top) / rect.height) * 100;
+      const xPercent: number =
+        ((moveEvent.clientX - rect.left) / rect.width) * 100;
+      const yPercent: number =
+        ((moveEvent.clientY - rect.top) / rect.height) * 100;
       const deltaX: number = xPercent - startXPercent;
       const deltaY: number = yPercent - startYPercent;
 
@@ -233,13 +241,21 @@ export default function BoundingBox() {
         prevBoxes.map((box: BoundingBoxData, boxIndex: number) => {
           if (boxIndex !== index) return box;
 
-          const halfWidth: number = (box.width ?? DEFAULT_BOX_WIDTH_PERCENT) / 2;
-          const halfHeight: number = (box.height ?? DEFAULT_BOX_HEIGHT_PERCENT) / 2;
+          const halfWidth: number =
+            (box.width ?? DEFAULT_BOX_WIDTH_PERCENT) / 2;
+          const halfHeight: number =
+            (box.height ?? DEFAULT_BOX_HEIGHT_PERCENT) / 2;
 
           return {
             ...box,
-            x: Math.min(100 - halfWidth, Math.max(halfWidth, originalX + deltaX)),
-            y: Math.min(100 - halfHeight, Math.max(halfHeight, originalY + deltaY)),
+            x: Math.min(
+              100 - halfWidth,
+              Math.max(halfWidth, originalX + deltaX),
+            ),
+            y: Math.min(
+              100 - halfHeight,
+              Math.max(halfHeight, originalY + deltaY),
+            ),
           };
         }),
       );

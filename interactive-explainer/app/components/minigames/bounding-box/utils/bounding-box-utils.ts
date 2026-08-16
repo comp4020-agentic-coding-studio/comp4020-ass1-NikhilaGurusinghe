@@ -1,15 +1,18 @@
 export type BoundingBoxData = {
-    label: string,
-    x: number,
-    y: number,
-    width?: number,
-    height?: number,
-}
+  label: string;
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+};
 
 export type BoundingBoxEdge = "n" | "s" | "e" | "w";
 export type BoundingBoxCorner = "nw" | "ne" | "sw" | "se";
 
-const CORNER_TO_EDGES: Record<BoundingBoxCorner, [BoundingBoxEdge, BoundingBoxEdge]> = {
+const CORNER_TO_EDGES: Record<
+  BoundingBoxCorner,
+  [BoundingBoxEdge, BoundingBoxEdge]
+> = {
   nw: ["n", "w"],
   ne: ["n", "e"],
   sw: ["s", "w"],
@@ -119,5 +122,8 @@ export function calculateBoundingBoxAccuracy(
     return Math.max(0, 1 - closestDistance / MAX_CENTRE_DISTANCE_PERCENT);
   });
 
-  return scores.reduce((sum: number, score: number) => sum + score, 0) / scores.length;
+  return (
+    scores.reduce((sum: number, score: number) => sum + score, 0) /
+    scores.length
+  );
 }

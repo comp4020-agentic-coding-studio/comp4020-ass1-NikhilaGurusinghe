@@ -55,9 +55,9 @@ export default function Captcha() {
 
   // minigame orchestration
   // i feel like captchIterations really shouldn't be a useState here
-  const captchaAssetsRef = useRef<
-    CaptchaIteration[]
-  >(generateCaptchaIterations(maxIterations));
+  const captchaAssetsRef = useRef<CaptchaIteration[]>(
+    generateCaptchaIterations(maxIterations),
+  );
   const [currIteration, setCurrIteration] = useState<number>(0);
   const [gridAnswers, setGridAnswers] = useState<boolean[][]>();
   const [isTutorialVisible, setIsTutorialVisible] = useState<boolean>(true);
