@@ -28,7 +28,7 @@ function SumRow({
 }) {
   return (
     <div
-      className={`flex items-center justify-between ${negative ? "text-red-600" : ""}`}
+      className={`flex items-center justify-between mb-3 ${negative ? "text-red-600" : ""}`}
     >
       <span className="capitalize">{label}</span>
       <span>{value}</span>
@@ -50,7 +50,7 @@ function OptionalSumRow({
   onToggle: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between text-red-600">
+    <div className="flex items-center justify-between mb-1 text-red-600">
       <span className="capitalize">{label}</span>
       <div className="flex items-center gap-3">
         <span>{-cost}</span>
@@ -140,10 +140,11 @@ export default function FamilyScreen() {
   }
 
   return (
-    <div className="w-full bg-white p-4 rounded-xl flex flex-col gap-4">
-      <div className="text-center font-bold">end of day {iteration + 1}</div>
+    <div className="w-full bg-(--background-secondary) flex flex-col gap-4">
+      <h1 className="text-left text-2xl font-bold">End of day {iteration + 1}</h1>
 
-      <div className="flex flex-col gap-2">
+      <div className="border border-gray-400 p-4 rounded-md flex flex-col">
+      <div className="flex flex-col">
         <SumRow label="savings" value={savings} />
         <SumRow label="salary" value={salary} />
         <SumRow label="rent" value={-RENT_COST} negative />
@@ -172,32 +173,33 @@ export default function FamilyScreen() {
         )}
       </div>
 
-      <hr className="border-dashed border-t-2 border-gray-300" />
+      <hr className="border-dashed border-t-2 border-gray-800 my-5" />
 
       <div className="flex items-center justify-between font-bold">
-        <span>total leftover</span>
-        <span>{totalLeftover}</span>
+        <span></span>
+        <span>${totalLeftover}</span>
+      </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
         {familyMembers.map((member: FamilyMemberStats) => (
           <div key={member.name} className="flex flex-col items-center gap-1">
-            <div className="w-16 h-16 rounded-full border-2 border-(--highlight-colour) flex items-center justify-center text-xs font-semibold">
+            <div className="w-24 aspect-square rounded-full font-bold text-xl text-(--background-secondary) bg-sky-600 flex items-center justify-center">
               {familyMemberHealthLabel(
                 getFamilyMemberHealth(member.healthPoints),
               )}
             </div>
-            <span className="text-xs">{member.name}</span>
+            <span className="font-bold text-sm">{member.name}</span>
           </div>
         ))}
       </div>
 
       <button
         type="button"
-        className="cursor-pointer"
+        className="cursor-pointer rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"
         onClick={handleNextClick}
       >
-        next
+        Next Day ➔
       </button>
     </div>
   );

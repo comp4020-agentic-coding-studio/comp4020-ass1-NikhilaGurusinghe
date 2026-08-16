@@ -6,11 +6,11 @@ export enum FamilyMemberHealth {
 }
 
 export enum FamilyMemberName {
-  WIFE = "WIFE",
-  SON = "SON",
-  MOTHER_IN_LAW = "MOTHER-IN-LAW",
-  AUNT = "AUNT",
-  NEPHEW = "NEPHEW",
+  WIFE = "Wife",
+  SON = "Son",
+  MOTHER_IN_LAW = "Mother-in-law",
+  AUNT = "Aunt",
+  NEPHEW = "Nephew",
 }
 
 export function getFamilyMemberHealth(

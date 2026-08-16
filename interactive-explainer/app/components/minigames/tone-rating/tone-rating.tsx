@@ -231,7 +231,7 @@ export default function ToneRating() {
                 startTimer();
               }}
             >
-              Next ➔
+              Start ➔
             </button>
           </div>
         </div>
