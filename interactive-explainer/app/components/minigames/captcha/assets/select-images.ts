@@ -5,6 +5,7 @@ import { basePath } from "@/lib/base-path";
 // imagePaths is going to have 3x3 images
 export type SelectImagesAsset = {
   imagePaths: string[][];
+  objectToIdentify: string;
   solutions: boolean[][];
 };
 
@@ -27,6 +28,7 @@ export const selectImagesAssets: SelectImagesAsset[] = [
         `${basePath}/images/cat.jpg`,
       ],
     ],
+    objectToIdentify: "cat",
     solutions: [
       [true, true, true],
       [true, true, true],
@@ -51,6 +53,7 @@ export const selectImagesAssets: SelectImagesAsset[] = [
         `${basePath}/images/cat.jpg`,
       ],
     ],
+    objectToIdentify: "cat",
     solutions: [
       [true, true, true],
       [true, true, true],
@@ -75,6 +78,7 @@ export const selectImagesAssets: SelectImagesAsset[] = [
         `${basePath}/images/cat.jpg`,
       ],
     ],
+    objectToIdentify: "cat",
     solutions: [
       [true, true, true],
       [true, true, true],

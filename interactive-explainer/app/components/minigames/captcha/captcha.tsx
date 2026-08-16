@@ -50,7 +50,7 @@ export default function Captcha() {
     const durationMS: number = performance.now() - startTimeRef.current;
     startTimeRef.current = null;
 
-   return durationMS;
+    return durationMS;
   }
 
   // minigame orchestration
@@ -146,7 +146,11 @@ export default function Captcha() {
 
     // TODO need to update salary here
     // keeping track of scores
-    subMinigameStats.push({ accuracy: accuracy, timePerTask: elapsedTime, salary: 0 });
+    subMinigameStats.push({
+      accuracy: accuracy,
+      timePerTask: elapsedTime,
+      salary: 0,
+    });
 
     // updating our grid and our iteration counter
     setCurrIteration((prevVal: number) => {
@@ -170,7 +174,20 @@ export default function Captcha() {
     <>
       <div className="text-white">{(elapsedMS / 1000).toFixed(0)}</div>
       <div className="w-full bg-white p-1 rounded-xl">
-        <div>Hello</div>
+        {currMode === CaptchaMode.SELECT_ALL_SQUARES && (
+          <div>
+            Select all squares with <br />{" "}
+            {captchaIterations[currIteration].assets.objectToIdentify}
+            <br />
+            If there are none, click next
+          </div>
+        )}
+        {currMode === CaptchaMode.SELECT_IMAGES && (
+          <div>
+            Select all images with <br />{" "}
+            {captchaIterations[currIteration].assets.objectToIdentify}
+          </div>
+        )}
 
         <div
           className="grid aspect-square"
