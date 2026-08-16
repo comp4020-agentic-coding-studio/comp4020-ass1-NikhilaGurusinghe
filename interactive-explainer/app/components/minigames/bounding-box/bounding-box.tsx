@@ -95,6 +95,16 @@ export default function BoundingBox() {
   );
   const [draftBox, setDraftBox] = useState<DraftBox | null>(null);
   const [isTutorialVisible, setIsTutorialVisible] = useState<boolean>(true);
+  // the tutorial overlay occludes the page underneath it, so the page
+  // shouldn't be scrollable while it's up
+  useEffect(() => {
+    if (!isTutorialVisible) return;
+
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isTutorialVisible]);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const currAsset: BoundingBoxAsset =
     boundingBoxAssetsRef.current[currIteration];
@@ -507,8 +517,31 @@ export default function BoundingBox() {
       </div>
       {isTutorialVisible && (
         <div className="backdrop-blur-sm fixed inset-0 z-67 flex flex-col items-center justify-center">
-          <div className="bg-(--background-secondary) border shadow-md/20 rounded-md border-gray-400 flex w-full max-w-3xl flex-col items-center py-32 px-16 sm:items-start">
-            <h1 className="text-2xl font-bold">hello</h1>
+          <div className="bg-(--background-secondary) border shadow-md/20 rounded-md border-gray-400 flex w-full max-w-3xl max-h-[90vh] flex-col items-center py-12 px-8 sm:items-start">
+              <h1 className="text-2xl font-bold mb-2">Bounding Boxes</h1>
+            
+            <div className="w-full min-h-0 overflow-y-auto flex flex-col items-center sm:items-start mb-4">
+              <span className="border-l-2 pl-2 ml-2 my-3">
+                <p>“The company they work for is called Sama and is a subcontractor to Meta. Here in Kenya’s capital, thousands of people train AI systems, teaching them to recognise and interpret the world.</p>
+                <p>They are called data annotators, and they are the manual labourers of the AI revolution. On the screens they draw boxes around flower pots and traffic signs, follow contours, register pixels and name objects: cars, lamps, people. Every image must be described, labelled and quality assured.</p>
+                <p>All to make the next generation of [Meta] smart glasses a little more intelligent – a little more human.</p>
+                <p>...</p>
+                <p>The employees have signed extensive confidentiality agreements – if they break them they can lose their jobs – and be thrown back into a life without income, often to the slums.</p>
+                <p>...</p>
+                <p>The workers in Kenya say that it feels uncomfortable to go to work. They tell us about deeply private video clips, which appear to come straight out of Western homes, from people who use the glasses in their everyday lives.”</p>
+                <br></br>
+                <a className="font-bold italic underline" href="https://www.svd.se/a/K8nrV4/metas-ai-smart-glasses-and-data-privacy-concerns-workers-say-we-see-everything">From She Came Out of the Bathroom Naked, Employee Says - Svenska Dagbladet</a>
+                </span>
+                <h2 className="text-xl font-bold">Instructions</h2>
+                <ul className="list-disc ml-5 mb-4">
+                  <li>Use your mouse to drag and draw bounding boxes around any object of interest, and label it, using the drop-down menu, with the closest possible label.</li>
+                  <li>You can click and drag the centres of bounding boxes, as well as clicking the cross at the top right corner to remove a box.</li>
+                  <li>It is okay to overlap bounding boxes.</li>
+                  <li>Try and capture the entirety of the object within the bounding box.</li>
+                  <li>If there are no objects of interest, then just press the next button and draw no bounding boxes.</li>
+                  <li>You will be timed per task.</li>
+                </ul>
+            </div>
             <button
               type={"button"}
               className="cursor-pointer rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"

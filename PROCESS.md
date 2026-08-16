@@ -2,7 +2,24 @@
 
 ## What I built
 
-TODO
+<p>The vast amounts of data that machine-learning algorithms require during training, 
+        necessitates an unprecedented, planetary-scale extraction of knowledge and understanding from an
+        underpaid, overworked, and exploited workforce of labourers toiling away for hours on end.</p>
+      <p>
+        The following "game" tries to simulate some of the this labour, specifically the labelling tasks.
+      </p>
+      <p>
+        Described as selling shovels during a gold rush, data labelling is a billion-dollar industry
+        built upon the labour of these people and is the essential to many of the machine-learning-based
+        producted - like LLMs - that we enjoy today.
+      </p>
+      <p> 
+        Data labellers are often not in a position to speak about their work due to factors such as non-disclosure
+        agreements associated with the work tha they do, as a result the labelling tasks you will attempt may
+        not be completely accurate, nor will they be representative of the emotional and physical toll that real data labellers experience.
+        However, all care has been taken to make these labelling tasks as accurate as possible from the disparate reporting that exists.
+        Again, no experience can replicate the exploitation that these workers face.
+      </p>
 
 ## The moments that mattered
 
