@@ -25,6 +25,17 @@ export function getFamilyMemberHealth(familyMemberHP: number) : FamilyMemberHeal
   return FamilyMemberHealth.DECEASED;
 }
 
+export enum FamilyMemberStatChangeType {
+  INCREMENT = "INCREMENT",
+  UPDATE = "UPDATE",
+}
+
+export type FamilyMemberStatChange = {
+  name: FamilyMemberName,
+  hpChange: number, // can be negative
+  statChangeType: FamilyMemberStatChangeType,
+}
+
 export type FamilyMemberStats = {
   name: FamilyMemberName,
   healthPoints: number
@@ -48,6 +59,28 @@ export class FamilyStats {
     }
 
     return false;
+  }
+
+  public updateFamilyHP(name: FamilyMemberName, update: number): boolean {
+    const familyMemberStats: FamilyMemberStats | undefined = this.familyStats.get(name);
+    if (familyMemberStats) {
+      familyMemberStats.healthPoints = update;
+      return true;
+    }
+
+    return false;
+  }
+
+  public updateStats(memberStatChanges: FamilyMemberStatChange[]): FamilyStats {
+    memberStatChanges.forEach((memberStatChange: FamilyMemberStatChange) => {
+      if (memberStatChange.statChangeType === FamilyMemberStatChangeType.INCREMENT) {
+        this.incrementFamilyHP(memberStatChange.name, memberStatChange.hpChange);
+      } else if (memberStatChange.statChangeType === FamilyMemberStatChangeType.UPDATE) {
+        this.updateFamilyHP(memberStatChange.name, memberStatChange.hpChange);
+      }
+    });
+
+    return this;
   }
 
   public getAllMemberStats(): FamilyMemberStats[] {

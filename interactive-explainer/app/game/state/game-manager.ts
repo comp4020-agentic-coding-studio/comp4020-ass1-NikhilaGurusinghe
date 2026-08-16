@@ -1,6 +1,6 @@
-import { assign, createMachine, setup } from "xstate";
+import { assign, setup } from "xstate";
 import { MinigameStats } from "../types/minigame-stats";
-import { DefaultFamilyStats, FamilyStats } from "../types/family-stats";
+import { DefaultFamilyStats, FamilyMemberStatChange, FamilyMemberStatChangeType, FamilyStats } from "../types/family-stats";
 
 enum GameManagerStates {
   MAIN_MENU = "MAIN_MENU_STATE",
@@ -12,6 +12,18 @@ enum GameManagerTransitions {
   NEXT = "NEXT_STATE_TRANSTION"
 }
 
+function hasPreviousMinigameStats(event: unknown): event is { previousMinigameStats: MinigameStats } {
+  return typeof event === "object" && event !== null && "previousMinigameStats" in event;
+}
+
+function hasLeftoverSalary(event: unknown): event is { leftoverSalary: number } {
+  return typeof event === "object" && event !== null && "leftoverSalary" in event;
+}
+
+function hasfamilyHpChanges(event: unknown): event is { familyHpChanges: FamilyMemberStatChange[] } {
+  return typeof event === "object" && event !== null && "familyHpChanges" in event;
+}
+
 export const gameManager = setup({
   types: {
     context: {} as {
@@ -20,17 +32,21 @@ export const gameManager = setup({
       previousMinigameStats: MinigameStats | undefined; // undefined initially
       familyStats: FamilyStats;
     },
-    events: {} as | 
+    events: {} as |
     { 
+      // transition out of minigame state
       type: GameManagerTransitions.NEXT,
-      // previousMinigameStats is used when transitioning out of the minigame state
-      previousMinigameStats?: MinigameStats, 
+      previousMinigameStats: MinigameStats, 
     } |
     { 
+      // transition out of family screen state
       type: GameManagerTransitions.NEXT,
-      // leftoverSalary is used to update savings when transitioning out of 
-      leftoverSalary?: number 
-    } 
+      leftoverSalary: number, // this can be negative
+      familyHpChanges: FamilyMemberStatChange[]
+    } | {
+      // transition out of main menu state
+      type: GameManagerTransitions.NEXT,
+    }
   },
 }).createMachine({
   id: "gameManager",
@@ -55,7 +71,7 @@ export const gameManager = setup({
         [GameManagerTransitions.NEXT]: {
           target: GameManagerStates.FAMILY_SCREEN,
           actions: assign({
-            previousMinigameStats: ({ event }) => event.previousMinigameStats,
+            previousMinigameStats: ({ event }) => hasPreviousMinigameStats(event) ? event.previousMinigameStats : undefined,
           }),
         }
       },
@@ -68,6 +84,8 @@ export const gameManager = setup({
           target: GameManagerStates.MINIGAME,
           actions: assign({
             iteration: ({ context }) => context.iteration + 1,
+            savings: ({ context, event }) => context.savings + (hasLeftoverSalary(event) ? event.leftoverSalary : 0),
+            familyStats: ({ context, event }) => hasfamilyHpChanges(event) ? context.familyStats.updateStats(event.familyHpChanges) : context.familyStats,
           }),
         }
       },
