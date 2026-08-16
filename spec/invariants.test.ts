@@ -3,11 +3,11 @@ import { join, relative, resolve } from "node:path";
 import { describe, expect, it } from "bun:test";
 
 // The invariants run against the BUILT site, so they check what actually
-// ships, not the source. Run `bun run build` in frienddotcom/ first (the CI
-// `check` job does). These hold for any good website, whatever the week's
-// brief asks — the week-specific contracts live in your own spec/*.test.ts
-// alongside this file.
-const DIST = resolve("frienddotcom/dist");
+// ships, not the source. Run `bun run build` in interactive-explainer/ first
+// (the CI `check` job does). These hold for any good website, whatever the
+// week's brief asks — the week-specific contracts live in your own
+// spec/*.test.ts alongside this file.
+const DIST = resolve("interactive-explainer/dist");
 
 function htmlFiles(dir: string = DIST): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
