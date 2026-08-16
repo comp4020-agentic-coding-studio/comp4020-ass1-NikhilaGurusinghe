@@ -1,13 +1,13 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
-import { JSDOM } from "jsdom";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 
 // The invariants run against the BUILT site, so they check what actually
-// ships, not the source. Run `pnpm build` first (the `check` script does).
-// These hold for any good website, whatever the week's brief asks — the
-// week-specific contracts live in your own spec/*.test.ts alongside this file.
-const DIST = resolve("dist");
+// ships, not the source. Run `bun run build` in frienddotcom/ first (the CI
+// `check` job does). These hold for any good website, whatever the week's
+// brief asks — the week-specific contracts live in your own spec/*.test.ts
+// alongside this file.
+const DIST = resolve("frienddotcom/dist");
 
 function htmlFiles(dir: string = DIST): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -17,44 +17,102 @@ function htmlFiles(dir: string = DIST): string[] {
   });
 }
 
-const pages = htmlFiles().map((path) => ({
-  name: relative(DIST, path),
-  doc: new JSDOM(readFileSync(path, "utf8")).window.document,
-}));
+type PageSummary = {
+  lang: string | null;
+  title: string;
+  hasViewportMeta: boolean;
+  hasNav: boolean;
+  h1Count: number;
+  images: { src: string | null; hasAlt: boolean }[];
+};
+
+// HTMLRewriter ships inside `bun` itself, so these invariants need no
+// HTML-parsing dependency of their own --- no node_modules, no package.json,
+// at the repo root. It's a streaming API, so draining the transformed body is
+// what actually runs the element handlers below.
+async function summarize(html: string): Promise<PageSummary> {
+  const summary: PageSummary = {
+    lang: null,
+    title: "",
+    hasViewportMeta: false,
+    hasNav: false,
+    h1Count: 0,
+    images: [],
+  };
+
+  const rewriter = new HTMLRewriter()
+    .on("html", {
+      element(el) {
+        summary.lang = el.getAttribute("lang");
+      },
+    })
+    .on("title", {
+      text(chunk) {
+        summary.title += chunk.text;
+      },
+    })
+    .on('meta[name="viewport"]', {
+      element() {
+        summary.hasViewportMeta = true;
+      },
+    })
+    .on("nav", {
+      element() {
+        summary.hasNav = true;
+      },
+    })
+    .on("h1", {
+      element() {
+        summary.h1Count += 1;
+      },
+    })
+    .on("img", {
+      element(el) {
+        summary.images.push({ src: el.getAttribute("src"), hasAlt: el.hasAttribute("alt") });
+      },
+    });
+
+  await rewriter.transform(new Response(html)).text();
+  return summary;
+}
+
+const pages = await Promise.all(
+  htmlFiles().map(async (path) => ({
+    name: relative(DIST, path),
+    page: await summarize(readFileSync(path, "utf8")),
+  })),
+);
 
 describe("invariants: every page", () => {
   it("built at least one page", () => {
     expect(pages.length).toBeGreaterThan(0);
   });
 
-  for (const { name, doc } of pages) {
+  for (const { name, page } of pages) {
     describe(name, () => {
       it("declares its language", () => {
-        expect(doc.documentElement.getAttribute("lang")).toBeTruthy();
+        expect(page.lang).toBeTruthy();
       });
 
       it("has a real title", () => {
-        expect(doc.title.trim()).not.toBe("");
+        expect(page.title.trim()).not.toBe("");
       });
 
       it("has a mobile viewport", () => {
-        expect(doc.querySelector('meta[name="viewport"]')).toBeTruthy();
+        expect(page.hasViewportMeta).toBe(true);
       });
 
       it("has a navigation landmark", () => {
-        expect(doc.querySelector("nav")).toBeTruthy();
+        expect(page.hasNav).toBe(true);
       });
 
       it("has exactly one top-level heading", () => {
-        expect(doc.querySelectorAll("h1").length).toBe(1);
+        expect(page.h1Count).toBe(1);
       });
 
       it("gives every image alt text", () => {
-        for (const img of doc.querySelectorAll("img")) {
-          expect(
-            img.hasAttribute("alt"),
-            `<img src="${img.getAttribute("src")}"> needs alt text`,
-          ).toBe(true);
+        for (const img of page.images) {
+          expect(img.hasAlt, `<img src="${img.src}"> needs alt text`).toBe(true);
         }
       });
     });

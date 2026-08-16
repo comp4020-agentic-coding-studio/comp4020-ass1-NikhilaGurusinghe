@@ -1,7 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { JSDOM } from "jsdom";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 
 // A worked page-specific test, not an invariant. It describes the starter
 // implementation so there is a concrete example to replace with tests for the
@@ -14,17 +13,24 @@ const NEXT_STEP =
   "Replace it with a test for this week's published spec, or delete it — see spec/README.md.";
 
 describe("starter page", () => {
-  it("marks the intro region used by the starter script", () => {
-    const distPath = resolve("dist/index.html");
+  it("marks the intro region used by the starter script", async () => {
+    const distPath = resolve("frienddotcom/dist/index.html");
     expect(
       existsSync(distPath),
       `${distPath} not found — you've restructured away from it. ${NEXT_STEP}`,
     ).toBe(true);
 
-    const doc = new JSDOM(readFileSync(distPath, "utf8")).window.document;
+    let foundIntro = false;
+    const rewriter = new HTMLRewriter().on('[data-testid="intro"]', {
+      element() {
+        foundIntro = true;
+      },
+    });
+    await rewriter.transform(new Response(readFileSync(distPath, "utf8"))).text();
+
     expect(
-      doc.querySelector('[data-testid="intro"]'),
+      foundIntro,
       `This described the starter page. ${NEXT_STEP} Don't re-add the attribute to make it pass.`,
-    ).toBeTruthy();
+    ).toBe(true);
   });
 });
