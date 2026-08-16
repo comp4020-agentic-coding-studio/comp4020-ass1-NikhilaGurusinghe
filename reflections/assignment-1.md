@@ -1,3 +1,5 @@
 1. What was the breakthrough that moved the work forward?
+I think the breakthrough that moved my work forwards was again looking at online guides and that sort of things (this was before i switched to using LLMs as there was a time I wasn't but then I just ran out of time so I had to us it). Also looking online at similar sites, similar resources for css styling inspo etc. and then translating that into something into tailwind classes really helped me as it allowed for a more cohesive style.
 
 2. What did this work change about who I want to be as a software developer?
+I used a lot of LLMs in this one (never agentically though) and I tried to review as much as I could, although its honestly a bit tiring with the amount of stuff that comes out of it. I didn't need to really "vibe code" in the sense I just say a broad thing and let it go, I was using very focused prompts and that seemed to work better than expected. In the future I would spend more time/allocate more time so I don't need to use an LLM as I feel like I didn't really learn anything new/practice my front-end skills too much.
