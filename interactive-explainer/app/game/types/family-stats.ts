@@ -106,7 +106,7 @@ export class DefaultFamilyStats extends FamilyStats {
   public constructor() {
     super(
       { name: FamilyMemberName.WIFE, healthPoints: 10 },
-      { name: FamilyMemberName.SON, healthPoints: 4 },
+      { name: FamilyMemberName.SON, healthPoints: 2 },
       { name: FamilyMemberName.MOTHER_IN_LAW, healthPoints: 10 },
     );
   }

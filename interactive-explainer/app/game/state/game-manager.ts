@@ -70,7 +70,9 @@ export const GameManager = setup({
 }).createMachine({
   id: "GameManager",
   context: {
-    savings: 0,
+    // starting buffer so day 1's mandatory rent isn't guaranteed to wipe out
+    // a family that hasn't earned any salary yet
+    savings: 60,
     iteration: 0,
     previousMinigameStats: undefined,
     familyStats: new DefaultFamilyStats(),

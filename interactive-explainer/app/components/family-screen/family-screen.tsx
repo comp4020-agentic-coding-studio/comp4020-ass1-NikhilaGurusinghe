@@ -40,23 +40,26 @@ function OptionalSumRow({
   label,
   cost,
   paid,
+  disabled,
   onToggle,
 }: {
   label: string;
   cost: number;
   paid: boolean;
+  disabled?: boolean;
   onToggle: () => void;
 }) {
   return (
     <div className="flex items-center justify-between text-red-600">
       <span className="capitalize">{label}</span>
       <div className="flex items-center gap-3">
-        <span>{paid ? -cost : 0}</span>
+        <span>{-cost}</span>
         <button
           type="button"
           onClick={onToggle}
+          disabled={disabled}
           aria-pressed={paid}
-          className={`w-8 h-8 rounded-full border-2 border-red-600 cursor-pointer ${paid ? "bg-red-600" : "bg-white"}`}
+          className={`w-8 h-8 rounded-full border-2 border-red-600 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 ${paid ? "bg-red-600" : "bg-white"}`}
         />
       </div>
     </div>
@@ -78,10 +81,12 @@ export default function FamilyScreen() {
     (state) => state.context.familyStats.getAllMemberStats(),
   );
 
-  // default to paying every need - the player opts OUT rather than in
-  const [payHeat, setPayHeat] = useState<boolean>(true);
-  const [payFood, setPayFood] = useState<boolean>(true);
-  const [payMedicine, setPayMedicine] = useState<boolean>(true);
+  // default to NOT paying - the affordability guard on the toggle handlers
+  // only runs when you turn a need on, so starting checked would skip it and
+  // could open the screen already negative
+  const [payHeat, setPayHeat] = useState<boolean>(false);
+  const [payFood, setPayFood] = useState<boolean>(false);
+  const [payMedicine, setPayMedicine] = useState<boolean>(false);
 
   const familySick: boolean = anyFamilyMemberSick(familyMembers);
 
@@ -96,6 +101,28 @@ export default function FamilyScreen() {
   // net change is sent - not the running total shown above, or savings would
   // get double-counted
   const dayNetChange: number = salary - totalCosts;
+
+  // turning a need OFF only ever raises totalLeftover, so that's always
+  // allowed; turning one ON is only allowed if it wouldn't take the total
+  // negative - toggling off is unaffected either way
+  const canAffordFood: boolean = payFood || totalLeftover - FOOD_COST >= 0;
+  const canAffordHeat: boolean = payHeat || totalLeftover - HEAT_COST >= 0;
+  const canAffordMedicine: boolean =
+    payMedicine || totalLeftover - MEDICINE_COST >= 0;
+
+  function handleToggleFood(): void {
+    setPayFood((prev: boolean) => (prev || canAffordFood ? !prev : prev));
+  }
+
+  function handleToggleHeat(): void {
+    setPayHeat((prev: boolean) => (prev || canAffordHeat ? !prev : prev));
+  }
+
+  function handleToggleMedicine(): void {
+    setPayMedicine((prev: boolean) =>
+      prev || canAffordMedicine ? !prev : prev,
+    );
+  }
 
   function handleNextClick(): void {
     const familyHpChanges = calculateFamilyHpChanges(
@@ -124,20 +151,23 @@ export default function FamilyScreen() {
           label="food"
           cost={FOOD_COST}
           paid={payFood}
-          onToggle={() => setPayFood((prev: boolean) => !prev)}
+          disabled={!canAffordFood}
+          onToggle={handleToggleFood}
         />
         <OptionalSumRow
           label="heat"
           cost={HEAT_COST}
           paid={payHeat}
-          onToggle={() => setPayHeat((prev: boolean) => !prev)}
+          disabled={!canAffordHeat}
+          onToggle={handleToggleHeat}
         />
         {familySick && (
           <OptionalSumRow
             label="medicine"
             cost={MEDICINE_COST}
             paid={payMedicine}
-            onToggle={() => setPayMedicine((prev: boolean) => !prev)}
+            disabled={!canAffordMedicine}
+            onToggle={handleToggleMedicine}
           />
         )}
       </div>
@@ -151,13 +181,13 @@ export default function FamilyScreen() {
 
       <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
         {familyMembers.map((member: FamilyMemberStats) => (
-          <div
-            key={member.name}
-            className="w-16 h-16 rounded-full border-2 border-(--highlight-colour) flex items-center justify-center text-xs font-semibold"
-          >
-            {familyMemberHealthLabel(
-              getFamilyMemberHealth(member.healthPoints),
-            )}
+          <div key={member.name} className="flex flex-col items-center gap-1">
+            <div className="w-16 h-16 rounded-full border-2 border-(--highlight-colour) flex items-center justify-center text-xs font-semibold">
+              {familyMemberHealthLabel(
+                getFamilyMemberHealth(member.healthPoints),
+              )}
+            </div>
+            <span className="text-xs">{member.name}</span>
           </div>
         ))}
       </div>
