@@ -87,3 +87,37 @@ export function resizeBoundingBox(
     minSizePercent,
   );
 }
+
+// centres more than this far apart (in percent of the image) score 0 for that solution
+const MAX_CENTRE_DISTANCE_PERCENT: number = 30;
+
+function centreDistancePercent(a: BoundingBoxData, b: BoundingBoxData): number {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+// each solution is matched against the user's boxes sharing its label (the
+// closest one, if there's more than one), and scored by how close its centre
+// is to the solution's centre - a box with no matching label scores 0
+export function calculateBoundingBoxAccuracy(
+  solutions: BoundingBoxData[],
+  userBoxes: BoundingBoxData[],
+): number {
+  if (solutions.length === 0) return 1;
+
+  const scores: number[] = solutions.map((solution: BoundingBoxData) => {
+    const matchingBoxes: BoundingBoxData[] = userBoxes.filter(
+      (box: BoundingBoxData) => box.label === solution.label,
+    );
+    if (matchingBoxes.length === 0) return 0;
+
+    const closestDistance: number = Math.min(
+      ...matchingBoxes.map((box: BoundingBoxData) =>
+        centreDistancePercent(box, solution),
+      ),
+    );
+
+    return Math.max(0, 1 - closestDistance / MAX_CENTRE_DISTANCE_PERCENT);
+  });
+
+  return scores.reduce((sum: number, score: number) => sum + score, 0) / scores.length;
+}

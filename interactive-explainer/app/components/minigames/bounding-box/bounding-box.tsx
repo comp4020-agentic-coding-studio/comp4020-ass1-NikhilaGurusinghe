@@ -17,6 +17,7 @@ import {
   type BoundingBoxCorner,
   type BoundingBoxData,
   type BoundingBoxEdge,
+  calculateBoundingBoxAccuracy,
   resizeBoundingBox,
 } from "./utils/bounding-box-utils";
 
@@ -96,8 +97,12 @@ export default function BoundingBox() {
   const [draftBox, setDraftBox] = useState<DraftBox | null>(null);
   const [isTutorialVisible, setIsTutorialVisible] = useState<boolean>(true);
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const currAsset: BoundingBoxAsset =
+    boundingBoxAssetsRef.current[currIteration];
 
-  const subMinigameStats: MinigameStats[] = [];
+  // accumulated across the whole game (not reset on re-render), so the final
+  // aggregate at the last iteration averages over all iterations, not just one
+  const subMinigameStatsRef = useRef<MinigameStats[]>([]);
 
   // click-and-drag on empty space draws a new box between the mouseDown and
   // mouseUp points; a live dashed preview follows the drag via pointer capture
@@ -293,24 +298,44 @@ export default function BoundingBox() {
   }
 
   function handleNextClick(): void {
+    // stop timer from previous iteration's next button press or from the tutorial next button
+    const elapsedTime: number = stopTimer() ?? 0;
+
+    const accuracy: number = calculateBoundingBoxAccuracy(
+      currAsset.solutions,
+      currBoundingBoxes,
+    );
+
+    // TODO calculate salary
+    // record this iteration's stats before the aggregation below, so the last
+    // iteration is included in its own final average
+    subMinigameStatsRef.current.push({
+      accuracy,
+      timePerTask: elapsedTime,
+      salary: 0,
+    });
+
     // we want to transition out of the minigame state
     if (currIteration >= maxIterations - 1) {
-      const subMinigameStatsTotals: MinigameStats = subMinigameStats.reduce(
-        (
-          acc: MinigameStats,
-          { accuracy, timePerTask, salary }: MinigameStats,
-        ) => ({
-          accuracy: acc.accuracy + accuracy,
-          timePerTask: acc.timePerTask + timePerTask,
-          salary: acc.salary + salary,
-        }),
-        { accuracy: 0, timePerTask: 0, salary: 0 },
-      );
+      const subMinigameStatsTotals: MinigameStats =
+        subMinigameStatsRef.current.reduce(
+          (
+            acc: MinigameStats,
+            { accuracy, timePerTask, salary }: MinigameStats,
+          ) => ({
+            accuracy: acc.accuracy + accuracy,
+            timePerTask: acc.timePerTask + timePerTask,
+            salary: acc.salary + salary,
+          }),
+          { accuracy: 0, timePerTask: 0, salary: 0 },
+        );
 
       const finalMinigameStats: MinigameStats = {
-        accuracy: subMinigameStatsTotals.accuracy / subMinigameStats.length,
+        accuracy:
+          subMinigameStatsTotals.accuracy / subMinigameStatsRef.current.length,
         timePerTask:
-          subMinigameStatsTotals.timePerTask / subMinigameStats.length,
+          subMinigameStatsTotals.timePerTask /
+          subMinigameStatsRef.current.length,
         salary: subMinigameStatsTotals.salary,
       };
 
@@ -321,16 +346,6 @@ export default function BoundingBox() {
       });
     }
 
-    // stop timer from previous iteration's next button press or from the tutorial next button
-    const elapsedTime: number = stopTimer() ?? 0;
-
-    // TODO score accuracy based on how close each box is to its matching solution's centre
-    subMinigameStats.push({
-      accuracy: 0,
-      timePerTask: elapsedTime,
-      salary: 0,
-    });
-
     // updating our iteration counter and clearing the boxes for the next image
     setCurrIteration((prevVal: number) =>
       Math.min(prevVal + 1, maxIterations - 1),
@@ -340,9 +355,6 @@ export default function BoundingBox() {
     // start timer for next iteration
     startTimer();
   }
-
-  const currAsset: BoundingBoxAsset =
-    boundingBoxAssetsRef.current[currIteration];
 
   return (
     <>

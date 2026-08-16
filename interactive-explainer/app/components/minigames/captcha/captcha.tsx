@@ -61,6 +61,9 @@ export default function Captcha() {
   const [currIteration, setCurrIteration] = useState<number>(0);
   const [gridAnswers, setGridAnswers] = useState<boolean[][]>();
   const [isTutorialVisible, setIsTutorialVisible] = useState<boolean>(true);
+  // accumulated across the whole game (not reset on re-render), so the final
+  // aggregate at the last iteration averages over all iterations, not just one
+  const subMinigameStatsRef = useRef<MinigameStats[]>([]);
 
   useEffect(() => {
     if (gridAnswers) return;
@@ -78,7 +81,6 @@ export default function Captcha() {
   const currMode: CaptchaMode = captchaAssetsRef.current[currIteration].mode;
   const columns: number = captchaModeToColumns(currMode);
   const rows: number = columns;
-  const subMinigameStats: MinigameStats[] = [];
 
   function handleGridClick(x: number, y: number) {
     setGridAnswers((prevGrid: boolean[][] | undefined) => {
@@ -92,35 +94,6 @@ export default function Captcha() {
 
   function handleNextClick(): void {
     if (!gridAnswers) return;
-
-    // TODO test this
-    // we want to transition out of the minigame state
-    if (currIteration >= maxIterations - 1) {
-      const subMinigameStatsTotals: MinigameStats = subMinigameStats.reduce(
-        (
-          acc: MinigameStats,
-          { accuracy, timePerTask, salary }: MinigameStats,
-        ) => ({
-          accuracy: acc.accuracy + accuracy,
-          timePerTask: acc.timePerTask + timePerTask,
-          salary: acc.salary + salary,
-        }),
-        { accuracy: 0, timePerTask: 0, salary: 0 },
-      );
-
-      const finalMinigameStats: MinigameStats = {
-        accuracy: subMinigameStatsTotals.accuracy / subMinigameStats.length,
-        timePerTask:
-          subMinigameStatsTotals.timePerTask / subMinigameStats.length,
-        salary: subMinigameStatsTotals.salary,
-      };
-
-      // goodbye :wave_emoji:
-      actorRef.send({
-        type: GameManagerTransitions.NEXT,
-        previousMinigameStats: finalMinigameStats,
-      });
-    }
 
     // calculating accuracy
     let accuracy: number = 0;
@@ -139,12 +112,44 @@ export default function Captcha() {
     const elapsedTime: number = stopTimer() ?? 0;
 
     // TODO need to update salary here
-    // keeping track of scores
-    subMinigameStats.push({
+    // record this iteration's stats before the aggregation below, so the last
+    // iteration is included in its own final average
+    subMinigameStatsRef.current.push({
       accuracy: accuracy,
       timePerTask: elapsedTime,
       salary: 0,
     });
+
+    // we want to transition out of the minigame state
+    if (currIteration >= maxIterations - 1) {
+      const subMinigameStatsTotals: MinigameStats =
+        subMinigameStatsRef.current.reduce(
+          (
+            acc: MinigameStats,
+            { accuracy, timePerTask, salary }: MinigameStats,
+          ) => ({
+            accuracy: acc.accuracy + accuracy,
+            timePerTask: acc.timePerTask + timePerTask,
+            salary: acc.salary + salary,
+          }),
+          { accuracy: 0, timePerTask: 0, salary: 0 },
+        );
+
+      const finalMinigameStats: MinigameStats = {
+        accuracy:
+          subMinigameStatsTotals.accuracy / subMinigameStatsRef.current.length,
+        timePerTask:
+          subMinigameStatsTotals.timePerTask /
+          subMinigameStatsRef.current.length,
+        salary: subMinigameStatsTotals.salary,
+      };
+
+      // goodbye :wave_emoji:
+      actorRef.send({
+        type: GameManagerTransitions.NEXT,
+        previousMinigameStats: finalMinigameStats,
+      });
+    }
 
     // updating our grid and our iteration counter
     setCurrIteration((prevVal: number) => {
