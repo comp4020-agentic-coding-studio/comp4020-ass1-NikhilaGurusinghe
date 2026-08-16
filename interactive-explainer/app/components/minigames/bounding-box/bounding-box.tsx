@@ -518,7 +518,7 @@ export default function BoundingBox() {
       {isTutorialVisible && (
         <div className="backdrop-blur-sm fixed inset-0 z-67 flex flex-col items-center justify-center">
           <div className="bg-(--background-secondary) border shadow-md/20 rounded-md border-gray-400 flex w-full max-w-3xl max-h-[90vh] flex-col items-center py-12 px-8 sm:items-start">
-              <h1 className="text-2xl font-bold mb-2">Bounding Boxes</h1>
+              <h1 className="text-2xl font-bold mb-2">Bounding the ambiguous with boxes</h1>
             
             <div className="w-full min-h-0 overflow-y-auto flex flex-col items-center sm:items-start mb-4">
               <span className="border-l-2 pl-2 ml-2 my-3">

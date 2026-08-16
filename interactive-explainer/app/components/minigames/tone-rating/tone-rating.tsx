@@ -233,9 +233,28 @@ export default function ToneRating() {
       </div>
       {isTutorialVisible && (
         <div className="backdrop-blur-sm fixed inset-0 z-67 flex flex-col items-center justify-center">
-          <div className="bg-(--background-secondary) border shadow-md/20 rounded-md border-gray-400 flex w-full max-w-3xl max-h-[90vh] flex-col items-center py-32 px-16 sm:items-start">
-            <div className="w-full min-h-0 overflow-y-auto flex flex-col items-center sm:items-start">
-              <h1 className="text-2xl font-bold">hello</h1>
+          <div className="bg-(--background-secondary) border shadow-md/20 rounded-md border-gray-400 flex w-full max-w-3xl max-h-[90vh] flex-col items-center py-12 px-8 sm:items-start">
+              <h1 className="text-2xl font-bold mb-2">Rating a machine's “tone”</h1>
+            
+            <div className="w-full min-h-0 overflow-y-auto flex flex-col items-center sm:items-start mb-4">
+              <span className="border-l-2 pl-2 ml-2 my-3">
+                <p>“My first task was to read a conversation between a user and “the assistant,” one of the major large-language chatbot models. Using a “bible” that dictated how the assistant should respond, I was to assess the chat as a success or a failure. The prompts were quirky and sad and heartbreaking. Are my feelings justified? Is this person’s behavior acceptable? Am I lovable? The AI responses belonged to an era when the assistant would happily tell you that you definitely had autism, your dad was clearly bipolar. I wondered if the user knew they had opted into sharing their private agonies as training data. After grading the assistant’s response on a scale of 1 to 5, I was to enter a justification for my verdict.”</p>
+                <br></br>
+                <a className="font-bold italic underline" href="https://www.wired.com/story/i-work-in-hollywood-everyone-who-used-to-make-tv-now-training-ai/">I Work in Hollywood. Everyone Who Used to Make TV Is Now Secretly Training AI - Ruth Fowler for Wired Magazine</a>
+                </span>
+                <h2 className="text-xl font-bold">Related</h2>
+                <ul className="list-disc ml-5 mb-4">
+                  <li><a className="font-bold italic underline" href="https://time.com/6247678/openai-chatgpt-kenya-workers/">Exclusive: OpenAI Used Kenyan Workers on Less Than $2 Per Hour to Make ChatGPT Less Toxic - Billy Perrigo for Time Magazine</a>
+                    </li>
+                    <li><a className="font-bold italic underline" href="https://arxiv.org/abs/2209.07858">Red Teaming Language Models to Reduce Harms: Methods, Scaling Behaviors, and Lessons Learned - Ganguli et al (Anthropic PBC)</a>
+                    </li>
+                </ul>
+                <h2 className="text-xl font-bold">Instructions</h2>
+                <ul className="list-disc ml-5 mb-4">
+                  <li>Read what the assistant said in response to the user's query. The roles of each conversation partner are labelled above the text bubble.</li>
+                  <li>Then based on what you read rate the assistant's response to the user based on tone, impact, and outcome. Consider your answers carefully before submitting.</li>
+                  <li>You will be timed per task.</li>
+                </ul>
             </div>
             <button
               type={"button"}
