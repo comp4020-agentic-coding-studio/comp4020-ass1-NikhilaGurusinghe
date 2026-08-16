@@ -144,6 +144,7 @@ export default function Captcha() {
     // stop timer from previous iteration's next button press or from the tutorial next button
     const elapsedTime: number = stopTimer() ?? 0;
 
+    // TODO need to update salary here
     // keeping track of scores
     subMinigameStats.push({ accuracy: accuracy, timePerTask: elapsedTime, salary: 0 });
 
@@ -167,8 +168,8 @@ export default function Captcha() {
 
   return (
     <>
+      <div className="text-white">{(elapsedMS / 1000).toFixed(0)}</div>
       <div className="w-full bg-white p-1 rounded-xl">
-        <div>{(elapsedMS / 1000).toFixed(0)}</div>
         <div>Hello</div>
 
         <div
@@ -251,7 +252,7 @@ export default function Captcha() {
       </div>
       {isTutorialVisible && (
         <div className="backdrop-blur-sm fixed inset-0 z-67 flex flex-col items-center justify-center">
-          <div className="flex flex-col items-center justify-center bg-white w-[50%]">
+          <div className="flex flex-col items-center justify-center bg-white w-full max-w-3xl">
             hello
             <button
               type={"button"}
