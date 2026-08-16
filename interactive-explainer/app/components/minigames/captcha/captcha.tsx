@@ -167,24 +167,23 @@ export default function Captcha() {
 
   return (
     <>
-      <div className="text-white">{formatTimer(elapsedMS)}</div>
-      <div className="w-full bg-white p-1 rounded-xl">
-        {currMode === CaptchaMode.SELECT_ALL_SQUARES && (
-          <div>
-            Select all squares with <br />{" "}
-            {captchaAssetsRef.current[currIteration].assets.objectToIdentify}
+     {currMode === CaptchaMode.SELECT_ALL_SQUARES && (
+          <h1 className="text-2xl font-bold mb-2">
+            Select all squares with <br />
+            <span className="text-4xl">{captchaAssetsRef.current[currIteration].assets.objectToIdentify}</span>
             <br />
             If there are none, click next
-          </div>
+          </h1>
         )}
         {currMode === CaptchaMode.SELECT_IMAGES && (
-          <div>
-            Select all images with <br />{" "}
-            {captchaAssetsRef.current[currIteration].assets.objectToIdentify}
-          </div>
+          <h1 className="text-2xl font-bold mb-2">
+            Select all images with <br />
+            <span className="text-4xl">{captchaAssetsRef.current[currIteration].assets.objectToIdentify}</span>
+          </h1>
         )}
-
-        <div
+      <span className="text-left">{formatTimer(elapsedMS)} spent on task</span>
+      <div className="w-full bg-(--background-secondary) p-1 flex flex-col gap-4">
+       <div
           className="grid aspect-square"
           style={{
             gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
@@ -256,10 +255,10 @@ export default function Captcha() {
 
         <button
           type={"button"}
-          className="cursor-pointer"
+          className="cursor-pointer rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"
           onClick={handleNextClick}
         >
-          next
+          Next ➔
         </button>
       </div>
       {isTutorialVisible && (
@@ -274,7 +273,7 @@ export default function Captcha() {
                 startTimer();
               }}
             >
-              Next
+              Start ➔
             </button>
           </div>
         </div>

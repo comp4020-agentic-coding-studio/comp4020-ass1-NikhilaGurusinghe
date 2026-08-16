@@ -391,11 +391,12 @@ export default function BoundingBox() {
 
   return (
     <>
-      <div className="text-white">{formatTimer(elapsedMS)}</div>
-      <div className="w-full bg-white p-1 rounded-xl">
+      <h1 className="text-2xl font-bold mb-2">Bound and label all objects in image</h1>
+      <span className="text-left">{formatTimer(elapsedMS)} spent on task</span>
+      <div className="w-full p-1 flex flex-col gap-4">
         <div
           ref={imageContainerRef}
-          className="relative w-full cursor-crosshair"
+          className="relative w-full cursor-crosshair rounded-md overflow-hidden"
           style={{
             aspectRatio: naturalSize
               ? `${naturalSize.width} / ${naturalSize.height}`
@@ -413,7 +414,7 @@ export default function BoundingBox() {
 
           {draftBox && (
             <div
-              className="absolute border-2 border-dashed border-(--highlight-colour) -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              className="absolute border-3 border-dashed border-sky-400 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
               style={{
                 left: `${draftBox.x}%`,
                 top: `${draftBox.y}%`,
@@ -427,7 +428,7 @@ export default function BoundingBox() {
             <div
               key={index}
               onPointerDown={(event) => handleBoxDragStart(event, index)}
-              className="absolute border-2 border-(--highlight-colour) -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+              className="absolute border-3 rounded-md border-sky-400 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
               style={{
                 left: `${box.x}%`,
                 top: `${box.y}%`,
@@ -441,7 +442,7 @@ export default function BoundingBox() {
                 onChange={(event) =>
                   handleBoxLabelChange(index, event.target.value)
                 }
-                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full cursor-pointer text-xs"
+                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full cursor-pointer bg-white rounded-md"
               >
                 {boundingBoxLabels.map((label: string) => (
                   <option key={label} value={label}>
@@ -496,10 +497,10 @@ export default function BoundingBox() {
 
         <button
           type={"button"}
-          className="cursor-pointer"
+          className="cursor-pointer rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"
           onClick={handleNextClick}
         >
-          next
+          Next ➔
         </button>
       </div>
       {isTutorialVisible && (
@@ -514,7 +515,7 @@ export default function BoundingBox() {
                 startTimer();
               }}
             >
-              Next
+              Start ➔ 
             </button>
           </div>
         </div>

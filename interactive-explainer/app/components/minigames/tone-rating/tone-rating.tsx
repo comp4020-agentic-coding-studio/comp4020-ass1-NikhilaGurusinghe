@@ -147,6 +147,7 @@ export default function ToneRating() {
 
   return (
     <>
+      <h1 className="text-2xl font-bold mb-2">Rate the following conversation</h1>
       <span className="text-left">{formatTimer(elapsedMS)} spent on task</span>
       <div className="w-full bg-(--background-secondary) p-1 flex flex-col gap-4">
         <section className="w-full overflow-y-auto flex flex-col gap-2 p-2">
@@ -215,7 +216,7 @@ export default function ToneRating() {
           className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 diabled:bg-(--highlight-dark) rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"
           onClick={handleNextClick}
         >
-          next
+          Next ➔ 
         </button>
       </div>
       {isTutorialVisible && (
@@ -230,7 +231,7 @@ export default function ToneRating() {
                 startTimer();
               }}
             >
-              Next
+              Next ➔
             </button>
           </div>
         </div>
