@@ -1,13 +1,12 @@
 import { assign, setup } from "xstate";
-import { MinigameStats } from "../types/minigame-stats";
 import {
   DefaultFamilyStats,
-  FamilyMemberStatChange,
-  FamilyMemberStatChangeType,
-  FamilyStats,
+  type FamilyMemberStatChange,
+  type FamilyStats,
 } from "../types/family-stats";
+import type { MinigameStats } from "../types/minigame-stats";
 
-enum GameManagerStates {
+export enum GameManagerStates {
   MAIN_MENU = "MAIN_MENU_STATE",
   MINIGAME = "MINIGAME_STATE",
   FAMILY_SCREEN = "FAMILY_SCREEN_STATE",
@@ -43,7 +42,7 @@ function hasfamilyHpChanges(
   );
 }
 
-export const gameManager = setup({
+export const GameManager = setup({
   types: {
     context: {} as {
       savings: number;
@@ -69,7 +68,7 @@ export const gameManager = setup({
         },
   },
 }).createMachine({
-  id: "gameManager",
+  id: "GameManager",
   context: {
     savings: 0,
     iteration: 0,
