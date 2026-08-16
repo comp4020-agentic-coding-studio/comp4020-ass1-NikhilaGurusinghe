@@ -141,44 +141,46 @@ export default function FamilyScreen() {
 
   return (
     <div className="w-full bg-(--background-secondary) flex flex-col gap-4">
-      <h1 className="text-left text-2xl font-bold">End of day {iteration + 1}</h1>
+      <h1 className="text-left text-2xl font-bold">
+        End of day {iteration + 1}
+      </h1>
 
       <div className="border border-gray-400 p-4 rounded-md flex flex-col">
-      <div className="flex flex-col">
-        <SumRow label="savings" value={savings} />
-        <SumRow label="salary" value={salary} />
-        <SumRow label="rent" value={-RENT_COST} negative />
-        <OptionalSumRow
-          label="food"
-          cost={FOOD_COST}
-          paid={payFood}
-          disabled={!canAffordFood}
-          onToggle={handleToggleFood}
-        />
-        <OptionalSumRow
-          label="heat"
-          cost={HEAT_COST}
-          paid={payHeat}
-          disabled={!canAffordHeat}
-          onToggle={handleToggleHeat}
-        />
-        {familySick && (
+        <div className="flex flex-col">
+          <SumRow label="savings" value={savings} />
+          <SumRow label="salary" value={salary} />
+          <SumRow label="rent" value={-RENT_COST} negative />
           <OptionalSumRow
-            label="medicine"
-            cost={MEDICINE_COST}
-            paid={payMedicine}
-            disabled={!canAffordMedicine}
-            onToggle={handleToggleMedicine}
+            label="food"
+            cost={FOOD_COST}
+            paid={payFood}
+            disabled={!canAffordFood}
+            onToggle={handleToggleFood}
           />
-        )}
-      </div>
+          <OptionalSumRow
+            label="heat"
+            cost={HEAT_COST}
+            paid={payHeat}
+            disabled={!canAffordHeat}
+            onToggle={handleToggleHeat}
+          />
+          {familySick && (
+            <OptionalSumRow
+              label="medicine"
+              cost={MEDICINE_COST}
+              paid={payMedicine}
+              disabled={!canAffordMedicine}
+              onToggle={handleToggleMedicine}
+            />
+          )}
+        </div>
 
-      <hr className="border-dashed border-t-2 border-gray-800 my-5" />
+        <hr className="border-dashed border-t-2 border-gray-800 my-5" />
 
-      <div className="flex items-center justify-between font-bold">
-        <span></span>
-        <span>${totalLeftover}</span>
-      </div>
+        <div className="flex items-center justify-between font-bold">
+          <span></span>
+          <span>${totalLeftover}</span>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
