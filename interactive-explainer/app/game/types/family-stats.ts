@@ -51,7 +51,7 @@ export class FamilyStats {
     })
   }
 
-  public incrementFamilyHP(name: FamilyMemberName, increment: number): boolean {
+  protected incrementFamilyHP(name: FamilyMemberName, increment: number): boolean {
     const familyMemberStats: FamilyMemberStats | undefined = this.familyStats.get(name);
     if (familyMemberStats) {
       familyMemberStats.healthPoints += increment;
@@ -61,7 +61,7 @@ export class FamilyStats {
     return false;
   }
 
-  public updateFamilyHP(name: FamilyMemberName, update: number): boolean {
+  protected updateFamilyHP(name: FamilyMemberName, update: number): boolean {
     const familyMemberStats: FamilyMemberStats | undefined = this.familyStats.get(name);
     if (familyMemberStats) {
       familyMemberStats.healthPoints = update;
