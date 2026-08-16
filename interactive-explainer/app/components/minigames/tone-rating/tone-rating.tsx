@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { GameManagerTransitions } from "@/app/game/state/game-manager";
 import { GameManagerContext } from "@/app/game/state/game-manager-context";
 import type { MinigameStats } from "@/app/game/types/minigame-stats";
+import { formatTimer } from "@/lib/format-timer";
 import {
   type ToneRatingAsset,
   toneRatingAssets,
@@ -146,49 +147,72 @@ export default function ToneRating() {
 
   return (
     <>
-      <div className="text-white">{(elapsedMS / 1000).toFixed(0)}</div>
-      <div className="w-full bg-white p-1 rounded-xl flex flex-col gap-4">
-        <div className="w-full max-h-48 overflow-y-auto flex flex-col gap-2 p-2">
-          <div className="self-end max-w-[80%] rounded-2xl bg-(--highlight-colour) text-white px-4 py-2">
-            {currAsset.userMessage}
-          </div>
-          <div className="self-start max-w-[80%] rounded-2xl bg-gray-200 px-4 py-2">
-            {currAsset.llmResponse}
-          </div>
-        </div>
+      <span className="text-left">{formatTimer(elapsedMS)} spent on task</span>
+      <div className="w-full bg-(--background-secondary) p-1 flex flex-col gap-4">
+        <section className="w-full overflow-y-auto flex flex-col gap-2 p-2">
+          <span className="self-end max-w-[80%]">
+            <h2 className="text-right">
+              human
+            </h2>
+            <p className="bg-sky-600 rounded-2xl text-white px-4 py-2">
+              {currAsset.userMessage}
+            </p>
+          </span>
+          <span className="self-start max-w-[80%]">
+            <h2 className="text-left">
+              Assistant
+            </h2>
+            <p className="rounded-2xl bg-gray-200 px-4 py-2">
+              {currAsset.llmResponse}
+            </p>
+          </span>
+        </section>
 
-        <div className="flex flex-col gap-3 px-2">
+        <div className="flex flex-col gap-4">
           {TONE_SPECTRUMS.map((spectrum: ToneSpectrum) => (
-            <div key={spectrum.key} className="flex items-center gap-2">
-              <span className="text-xs w-16 text-right">
+            <div key={spectrum.key}>
+            <h2> Rate the assistant's {spectrum.key}</h2>
+            <div className="flex items-center gap-2 border border-gray-400 p-4 rounded-md">
+              <span className="w-16 text-right">
                 {spectrum.lowLabel}
               </span>
-              <div className="flex flex-1 justify-center gap-3">
+              <div className="flex flex-1 justify-between px-5">
                 {RATING_VALUES.map((value: number) => {
                   const isSelected: boolean =
                     selections[spectrum.key] === value;
 
                   return (
-                    <button
+                    <label
                       key={value}
-                      type="button"
-                      onClick={() => handleSpectrumSelect(spectrum.key, value)}
-                      className={`w-8 h-8 rounded-full cursor-pointer border-2 border-(--highlight-colour) ${isSelected ? "bg-(--highlight-colour) text-white" : "bg-white"}`}
+                      className="flex flex-col items-center gap-1 cursor-pointer"
                     >
-                      {value}
-                    </button>
+                      <input
+                        type="radio"
+                        name={spectrum.key}
+                        checked={isSelected}
+                        onChange={() => handleSpectrumSelect(spectrum.key, value)}
+                        className="sr-only"
+                      />
+                      <span className="w-5 h-5 rounded-full border-2 border-gray-500 bg-white flex items-center justify-center">
+                        {isSelected && (
+                          <span className="w-2.5 h-2.5 rounded-full bg-gray-500" />
+                        )}
+                      </span>
+                      <span className="text-xs">{value}</span>
+                    </label>
                   );
                 })}
               </div>
-              <span className="text-xs w-16">{spectrum.highLabel}</span>
+              <span className="w-16">{spectrum.highLabel}</span>
             </div>
+            </div >
           ))}
         </div>
 
         <button
           type={"button"}
           disabled={!allSpectrumsRated}
-          className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+          className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 diabled:bg-(--highlight-dark) rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"
           onClick={handleNextClick}
         >
           next
@@ -196,11 +220,11 @@ export default function ToneRating() {
       </div>
       {isTutorialVisible && (
         <div className="backdrop-blur-sm fixed inset-0 z-67 flex flex-col items-center justify-center">
-          <div className="flex flex-col items-center justify-center bg-white w-full max-w-3xl">
-            hello
+          <div className="bg-(--background-secondary) border shadow-md/20 rounded-md border-gray-400 flex w-full max-w-3xl flex-col items-center py-32 px-16 sm:items-start">
+            <h1 className="text-2xl font-bold">hello</h1>
             <button
               type={"button"}
-              className="cursor-pointer"
+              className="cursor-pointer rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"
               onClick={() => {
                 setIsTutorialVisible(false);
                 startTimer();

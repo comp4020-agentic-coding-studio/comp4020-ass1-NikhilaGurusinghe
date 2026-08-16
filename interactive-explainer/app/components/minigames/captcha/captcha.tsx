@@ -14,6 +14,7 @@ import { GameManagerTransitions } from "@/app/game/state/game-manager";
 import { GameManagerContext } from "@/app/game/state/game-manager-context";
 import type { MinigameStats } from "@/app/game/types/minigame-stats";
 import { basePath } from "@/lib/base-path";
+import { formatTimer } from "@/lib/format-timer";
 import type { SelectImagesAsset } from "./assets/select-images";
 
 export default function Captcha() {
@@ -166,7 +167,7 @@ export default function Captcha() {
 
   return (
     <>
-      <div className="text-white">{(elapsedMS / 1000).toFixed(0)}</div>
+      <div className="text-white">{formatTimer(elapsedMS)}</div>
       <div className="w-full bg-white p-1 rounded-xl">
         {currMode === CaptchaMode.SELECT_ALL_SQUARES && (
           <div>
@@ -263,11 +264,11 @@ export default function Captcha() {
       </div>
       {isTutorialVisible && (
         <div className="backdrop-blur-sm fixed inset-0 z-67 flex flex-col items-center justify-center">
-          <div className="flex flex-col items-center justify-center bg-white w-full max-w-3xl">
-            hello
+          <div className="bg-(--background-secondary) border shadow-md/20 rounded-md border-gray-400 flex w-full max-w-3xl flex-col items-center py-32 px-16 sm:items-start">
+            <h1 className="text-2xl font-bold">hello</h1>
             <button
               type={"button"}
-              className="cursor-pointer"
+              className="cursor-pointer rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"
               onClick={() => {
                 setIsTutorialVisible(false);
                 startTimer();

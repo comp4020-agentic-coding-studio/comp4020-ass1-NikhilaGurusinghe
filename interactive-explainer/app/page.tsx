@@ -48,7 +48,7 @@ function GameScreen() {
 export default function Home() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center font-sans ">
-      <main className="bg-(--background-secondary) border rounded-md border-gray-400 flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bgsm:items-start">
+      <main className="bg-(--background-secondary) border rounded-md border-gray-400 flex w-full max-w-3xl flex-col items-center py-12 px-8 sm:items-start">
         <GameManagerContext.Provider>
           <GameScreen />
         </GameManagerContext.Provider>

@@ -8,7 +8,7 @@ export default function MainMenu() {
 
   return (
     <div className="w-full flex flex-col items-center gap-4">
-      <div>Main Menu</div>
+      <h1 className="text-2xl font-bold">Main Menu</h1>
       <button
         type="button"
         className="cursor-pointer rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"
