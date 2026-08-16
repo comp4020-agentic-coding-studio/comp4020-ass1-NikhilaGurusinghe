@@ -49,56 +49,56 @@ export class FamilyStats {
   public constructor(...familyMembers: FamilyMemberStats[]) {
     this.familyStats = new Map<FamilyMemberName, FamilyMemberStats>();
     familyMembers.forEach((memberStats: FamilyMemberStats) => {
-      this.familyStats.set(memberStats.name, memberStats);
+      // copy rather than alias the caller's object, so nothing outside this
+      // instance can reach in and mutate its stored stats later
+      this.familyStats.set(memberStats.name, { ...memberStats });
     });
   }
 
-  protected incrementFamilyHP(
-    name: FamilyMemberName,
-    increment: number,
-  ): boolean {
-    const familyMemberStats: FamilyMemberStats | undefined =
-      this.familyStats.get(name);
-    if (familyMemberStats) {
-      familyMemberStats.healthPoints += increment;
-      return true;
-    }
-
-    return false;
-  }
-
-  protected updateFamilyHP(name: FamilyMemberName, update: number): boolean {
-    const familyMemberStats: FamilyMemberStats | undefined =
-      this.familyStats.get(name);
-    if (familyMemberStats) {
-      familyMemberStats.healthPoints = update;
-      return true;
-    }
-
-    return false;
-  }
-
+  // applies every change against a working copy of each member's HP and
+  // returns a brand-new FamilyStats built from the result - this instance
+  // (and the FamilyMemberStats objects it holds) are never mutated, so it's
+  // safe to keep living in xstate context and be compared/replaced by assign
+  // the normal immutable way
   public updateStats(memberStatChanges: FamilyMemberStatChange[]): FamilyStats {
+    const updatedHealthPoints = new Map<FamilyMemberName, number>(
+      this.getAllMemberStats().map((memberStats: FamilyMemberStats) => [
+        memberStats.name,
+        memberStats.healthPoints,
+      ]),
+    );
+
     memberStatChanges.forEach((memberStatChange: FamilyMemberStatChange) => {
-      if (
+      const currentHP: number | undefined = updatedHealthPoints.get(
+        memberStatChange.name,
+      );
+      // a change for a member this instance never had is a no-op, matching
+      // the old map.get-returns-undefined behaviour
+      if (currentHP === undefined) return;
+
+      updatedHealthPoints.set(
+        memberStatChange.name,
         memberStatChange.statChangeType === FamilyMemberStatChangeType.INCREMENT
-      ) {
-        this.incrementFamilyHP(
-          memberStatChange.name,
-          memberStatChange.hpChange,
-        );
-      } else if (
-        memberStatChange.statChangeType === FamilyMemberStatChangeType.UPDATE
-      ) {
-        this.updateFamilyHP(memberStatChange.name, memberStatChange.hpChange);
-      }
+          ? currentHP + memberStatChange.hpChange
+          : memberStatChange.hpChange,
+      );
     });
 
-    return this;
+    return new FamilyStats(
+      ...this.getAllMemberStats().map(
+        (memberStats: FamilyMemberStats): FamilyMemberStats => ({
+          name: memberStats.name,
+          healthPoints: updatedHealthPoints.get(memberStats.name) as number,
+        }),
+      ),
+    );
   }
 
   public getAllMemberStats(): FamilyMemberStats[] {
-    return Array.from(this.familyStats.values());
+    // copies out, so callers can't mutate this instance's stored stats either
+    return Array.from(this.familyStats.values()).map(
+      (memberStats: FamilyMemberStats) => ({ ...memberStats }),
+    );
   }
 }
 

@@ -1,11 +1,8 @@
 "use client";
 
-import { useActorRef } from "@xstate/react";
 import { useRef, useState } from "react";
-import {
-  GameManager,
-  GameManagerTransitions,
-} from "@/app/game/state/game-manager";
+import { GameManagerTransitions } from "@/app/game/state/game-manager";
+import { GameManagerContext } from "@/app/game/state/game-manager-context";
 import type { MinigameStats } from "@/app/game/types/minigame-stats";
 import {
   type ToneRatingAsset,
@@ -30,7 +27,7 @@ export default function ToneRating() {
   const maxIterations: number = 3;
 
   // our state machine
-  const actorRef = useActorRef(GameManager);
+  const actorRef = GameManagerContext.useActorRef();
 
   // timer related
   const startTimeRef = useRef<number | null>(null);

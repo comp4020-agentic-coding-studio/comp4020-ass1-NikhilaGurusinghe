@@ -23,7 +23,7 @@ export function initToneRatingSelections(): ToneRatingSelections {
 }
 
 // each spectrum is scored by how close the user's pick is to the solution's
-// pick on the 1-4 scale; an unanswered spectrum scores 0, same as an
+// pick on the 1-5 scale; an unanswered spectrum scores 0, same as an
 // unmatched label in the bounding-box minigame
 export function calculateToneRatingAccuracy(
   solution: Record<string, number>,

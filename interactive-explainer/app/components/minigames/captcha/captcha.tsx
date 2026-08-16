@@ -1,6 +1,5 @@
 "use client";
 
-import { useActorRef } from "@xstate/react";
 import Image from "next/image";
 import { Fragment, useEffect, useRef, useState } from "react";
 import type { SelectAllSquaresAsset } from "@/app/components/minigames/captcha/assets/select-all-squares";
@@ -11,10 +10,8 @@ import {
   generateCaptchaIterations,
   initBooleanGrid,
 } from "@/app/components/minigames/captcha/utils/captcha-utils";
-import {
-  GameManager,
-  GameManagerTransitions,
-} from "@/app/game/state/game-manager";
+import { GameManagerTransitions } from "@/app/game/state/game-manager";
+import { GameManagerContext } from "@/app/game/state/game-manager-context";
 import type { MinigameStats } from "@/app/game/types/minigame-stats";
 import { basePath } from "@/lib/base-path";
 import type { SelectImagesAsset } from "./assets/select-images";
@@ -23,7 +20,7 @@ export default function Captcha() {
   const maxIterations: number = 3;
 
   // our state machine
-  const actorRef = useActorRef(GameManager);
+  const actorRef = GameManagerContext.useActorRef();
 
   // timer related
   const startTimeRef = useRef<number | null>(null);
