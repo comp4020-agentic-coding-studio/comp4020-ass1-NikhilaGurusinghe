@@ -1,3 +1,1 @@
-export default function Captcha() {
-    
-}
+export default function Captcha() {}

@@ -13,7 +13,9 @@ export enum FamilyMemberName {
   NEPHEW = "NEPHEW",
 }
 
-export function getFamilyMemberHealth(familyMemberHP: number) : FamilyMemberHealth {
+export function getFamilyMemberHealth(
+  familyMemberHP: number,
+): FamilyMemberHealth {
   if (familyMemberHP >= 4) {
     return FamilyMemberHealth.HEALTHY;
   } else if (familyMemberHP > 0) {
@@ -31,15 +33,15 @@ export enum FamilyMemberStatChangeType {
 }
 
 export type FamilyMemberStatChange = {
-  name: FamilyMemberName,
-  hpChange: number, // can be negative
-  statChangeType: FamilyMemberStatChangeType,
-}
+  name: FamilyMemberName;
+  hpChange: number; // can be negative
+  statChangeType: FamilyMemberStatChangeType;
+};
 
 export type FamilyMemberStats = {
-  name: FamilyMemberName,
-  healthPoints: number
-}
+  name: FamilyMemberName;
+  healthPoints: number;
+};
 
 export class FamilyStats {
   private readonly familyStats: Map<FamilyMemberName, FamilyMemberStats>;
@@ -48,11 +50,15 @@ export class FamilyStats {
     this.familyStats = new Map<FamilyMemberName, FamilyMemberStats>();
     familyMembers.forEach((memberStats: FamilyMemberStats) => {
       this.familyStats.set(memberStats.name, memberStats);
-    })
+    });
   }
 
-  protected incrementFamilyHP(name: FamilyMemberName, increment: number): boolean {
-    const familyMemberStats: FamilyMemberStats | undefined = this.familyStats.get(name);
+  protected incrementFamilyHP(
+    name: FamilyMemberName,
+    increment: number,
+  ): boolean {
+    const familyMemberStats: FamilyMemberStats | undefined =
+      this.familyStats.get(name);
     if (familyMemberStats) {
       familyMemberStats.healthPoints += increment;
       return true;
@@ -62,7 +68,8 @@ export class FamilyStats {
   }
 
   protected updateFamilyHP(name: FamilyMemberName, update: number): boolean {
-    const familyMemberStats: FamilyMemberStats | undefined = this.familyStats.get(name);
+    const familyMemberStats: FamilyMemberStats | undefined =
+      this.familyStats.get(name);
     if (familyMemberStats) {
       familyMemberStats.healthPoints = update;
       return true;
@@ -73,9 +80,16 @@ export class FamilyStats {
 
   public updateStats(memberStatChanges: FamilyMemberStatChange[]): FamilyStats {
     memberStatChanges.forEach((memberStatChange: FamilyMemberStatChange) => {
-      if (memberStatChange.statChangeType === FamilyMemberStatChangeType.INCREMENT) {
-        this.incrementFamilyHP(memberStatChange.name, memberStatChange.hpChange);
-      } else if (memberStatChange.statChangeType === FamilyMemberStatChangeType.UPDATE) {
+      if (
+        memberStatChange.statChangeType === FamilyMemberStatChangeType.INCREMENT
+      ) {
+        this.incrementFamilyHP(
+          memberStatChange.name,
+          memberStatChange.hpChange,
+        );
+      } else if (
+        memberStatChange.statChangeType === FamilyMemberStatChangeType.UPDATE
+      ) {
         this.updateFamilyHP(memberStatChange.name, memberStatChange.hpChange);
       }
     });
