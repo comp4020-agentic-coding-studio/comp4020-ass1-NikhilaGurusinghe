@@ -4,6 +4,7 @@ import { useActorRef, useSelector } from "@xstate/react";
 import MainMenu from "./components/main-menu";
 import Captcha from "./components/minigames/captcha/captcha";
 import { GameManager, GameManagerStates } from "./game/state/game-manager";
+import BoundingBox from "./components/minigames/bounding-box/bounding-box";
 
 export default function Home() {
   // our state machine
@@ -31,7 +32,8 @@ export default function Home() {
         <div>
           {currGameIteration}
         </div> */}
-        <Captcha />
+        {/* <Captcha /> */}
+        <BoundingBox />
       </main>
     </div>
   );
