@@ -1,83 +1,91 @@
 # Process overview
 
-<!-- TEMPLATE: this file is a shape to fill in, not a form. Replace everything
-     in it with your own overview, and delete this comment — `pnpm
-     check:evidence` will remind you if it's still here. -->
-
-A reading-guide to how the work came together --- a map to your process, not an
-essay about it. Markers read this file and follow its citations; they don't
-trawl the repo for evidence you didn't point at, so if a moment mattered, cite
-it.
-
-This file is the shape; the course site's
-[assessment page](https://comp.anu.edu.au/courses/comp4020-agentic-coding-studio/topics/assessment/#what-you-submit)
-is the requirement, and each brief adds its own word count and moment count.
-
 ## What I built
 
-One paragraph: the thing, and the idea behind it.
+TODO
 
 ## The moments that mattered
 
-Three or four for an assignment; fewer is fine for a weekly prototype. Keep the
-list short so each moment has room to do all four jobs:
+1. **Randomized minigame order broke the type checker, and the obvious fix
+   would have broken the loading guard.** `MINIGAMES` was typed as
+   `Array<() => React.JSX.Element>`, but `Captcha` legitimately returns `null`
+   while its grid state initializes (`if (!gridAnswers) return null;`), so
+   TypeScript flagged the array as soon as it was shuffled into a random
+   order instead of a fixed one. The obvious fix — forcing every minigame to
+   always return a real element — would have meant reworking that loading
+   guard just to satisfy the type. Instead I widened the array's type to
+   `React.ComponentType[]`, which is honest about what a React component can
+   return and needed no changes to any minigame's logic. I checked it with
+   `tsc --noEmit` (clean), a full `next build` (compiled and typechecked), and
+   then loaded the page a few times in the browser to confirm the randomized
+   order still rendered correctly with the loading guard intact.
+   [`027de67`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-NikhilaGurusinghe/commit/027de679e11658a409dda82c8fd81711b33a4908)
 
-1. **what happened** --- the problem, or the thing the agent got wrong
-2. **what you did instead of the obvious thing** --- the call you made, and why
-   it beat the obvious one
-3. **how you knew it was right** --- the check you ran, the viewport you looked
-   at, what you read before accepting the diff
-4. **the citation** --- a commit or commit range, a `CLAUDE.md` change, a check
-   that went from red to green, a prompt paired with the commit it produced
+2. **The bounding-box accuracy check only worked by coincidence.** Both the
+   authored solution boxes and the user's drawn boxes are stored as
+   percentages of the *container*, but the image inside that container was
+   rendered with `object-contain` inside a fixed `aspect-square` box — so a
+   non-square image gets letterboxed, and container-percent stops lining up
+   with image-percent. It only "worked" because the one asset in use,
+   `cat.jpg`, happens to be near-square (720×719). I asked myself whether this
+   was already handled:
+   > with the bounding box accuracy calculation what happens if the image
+   > size of the image on the page is different to its original size then
+   > its not possible to correlate the solution bounding box coords to the
+   > ones drawn by the user, is this something you've already handled?
 
-Jobs 2 and 3 are the ones the repo can't tell a reader on its own, so they're
-where the marks are. The strongest moments are the ones where a correction
-landed in the **harness** rather than in another prompt --- a rule added to
-`CLAUDE.md`, a check wired up, an attempt thrown away: re-prompting until it
-passes is the routine case, and changing what the agent works against is the
-skilled one.
+   My first fix was a conversion layer — helper functions to translate
+   click/drag coordinates between container-percent and image-percent space —
+   but that added a parallel set of math to every pointer handler for a
+   problem that had a smaller root cause. I threw that attempt away and asked
+   for the simpler option instead:
+   > can i get rid of this by removing aspect-square?
 
-Cite each moment as a link whose text is the commit hash or range and whose
-target is this repo's commit or compare URL, so a reader clicks straight to the
-evidence:
+   The actual fix: make the container's CSS `aspect-ratio` track the image's
+   own `naturalWidth`/`naturalHeight` (captured via `onLoad`), so the
+   container always matches the image's shape exactly and `object-contain`
+   never has to letterbox it. No conversion math needed, at the cost of the
+   container's on-screen shape now varying per asset. I verified it by
+   watching the container snap to the image's real proportions on load at
+   both viewport widths, and confirming `cat.jpg` was unaffected.
+   [`12e9cba`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-NikhilaGurusinghe/commit/12e9cbaa4e311cb5b2edbafb43b40b535dce9b38)
 
-- one commit: [`a1b2c3d`](https://github.com/YOUR-ORG/YOUR-REPO/commit/a1b2c3d)
-- a range:
-  [`a1b2c3d...e4f5a6b`](https://github.com/YOUR-ORG/YOUR-REPO/compare/a1b2c3d...e4f5a6b)
+3. **Highlight colour had spread past buttons, and re-prompting per-component
+   wasn't going to fix that.** Each minigame had picked up its own one-off
+   styling in isolation — captcha's timer was `text-white` sitting directly on
+   the page's light grey background (invisible), tone-rating's "selected"
+   rating state filled the whole circle with the highlight colour instead of
+   looking like a radio button, and the highlight colour itself had leaked
+   onto non-interactive elements (bounding-box outlines, a chat bubble) rather
+   than staying a "this is clickable" signal. Rather than fix each component
+   as a one-off, I set an explicit rule and applied it everywhere in one pass:
+   > can you look at the style in tone-rating.tsx and unify that across all
+   > the minigame components please? keep it as boring and plain as possible
+   > only use highlight colour on buttons
 
-To pair a prompt with the commit it produced, quote the prompt (curated, not a
-full transcript) next to the citation:
+   I checked the result by going component-by-component and confirming no
+   non-button element still used the highlight colour, then compared the
+   three minigames side by side to make sure the timer, container, and Next
+   button now shared one convention instead of three.
+   [`fb604eb...a40ff0e`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-NikhilaGurusinghe/compare/fb604ebaa184e1cbfd9ca2db14b72d9837aa4acb...a40ff0e7768fa8c64e888fcd3a74fc96b3bb295e)
 
-> the prompt, verbatim
+4. **The family-screen toggle buttons only lined up by luck of the label
+   width.** Food/heat/medicine each rendered as their own `flex
+   justify-between` row, so the toggle button's horizontal position depended
+   on how long that row's own label happened to be — it wasn't a real column,
+   just three rows that happened to look similar. I was asked directly to fix
+   the alignment structurally:
+   > can you adjust the selection buttons for food, heat, and medicine so
+   > they sit in their own column to the right of the costs? also increase
+   > the gap between line items so that they match the size of the buttons
+   > please
 
-Screenshots are welcome where one carries the verification better than a
-sentence does. Commit the file to this repo and link it with a **relative**
-path, which is what makes it render on GitHub: `![alt text](docs/before.png)`.
-Images don't count towards the word count and don't replace the citation.
-
-### A worked moment, for shape
-
-Delete this section along with the rest of the boilerplate --- it's here to show
-the four jobs in one paragraph, not to be imitated in content.
-
-> The date formatter kept coming back with `toLocaleDateString()` and no locale
-> argument, so the same build rendered differently on my machine and in CI. I'd
-> already re-prompted it twice, which fixed the line but not the habit, so the
-> third time I put the rule in `CLAUDE.md` instead
-> ([`3f9ac21`](https://github.com/YOUR-ORG/YOUR-REPO/commit/3f9ac21)) and added
-> a spec test that fails on a bare `toLocaleDateString`. That's what told me it
-> had actually taken: the test went red against the old code and green against
-> the new, and the next two features it wrote passed it without prompting
-> ([`3f9ac21...b7e0d14`](https://github.com/YOUR-ORG/YOUR-REPO/compare/3f9ac21...b7e0d14)).
-
-## Before you ship
-
-`pnpm check:evidence` verifies your citations resolve to real commits, that the
-current reflection entry is in `reflections/`, and that your `CLAUDE.md` is
-there --- before a marker ever opens the file. It checks that your map is
-traceable, not that it is good: the marker judges whether your small,
-deliberately chosen set of moments shows real judgement and reflection. A green
-check is not a substitute for that curation.
-
-Images are deliberately not checked, because whether one renders is visible the
-moment you look. Open this file on GitHub and look at it before you ship.
+   Instead of nudging widths per-row, I turned the summary list into a single
+   3-column CSS grid (label / cost / button) and had each row component
+   render its cells as grid siblings rather than owning its own flex row, so
+   the button column is a structural property of the grid, not a coincidence
+   of matching widths — and rows without a button (savings, salary, rent)
+   just leave that column empty. I checked that those non-toggle rows still
+   lined up correctly against the toggle rows, and that the new row gap
+   visually matched the buttons' `2rem` size rather than an arbitrary value.
+   [`ac770b9`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-NikhilaGurusinghe/commit/ac770b9916b71e338516a7fc921c92184f317285)

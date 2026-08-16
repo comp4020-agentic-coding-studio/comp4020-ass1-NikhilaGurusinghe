@@ -13,6 +13,7 @@ import {
 import { GameManagerTransitions } from "@/app/game/state/game-manager";
 import { GameManagerContext } from "@/app/game/state/game-manager-context";
 import type { MinigameStats } from "@/app/game/types/minigame-stats";
+import { calculateTaskSalary } from "@/app/game/utils/salary-utils";
 import { basePath } from "@/lib/base-path";
 import { formatTimer } from "@/lib/format-timer";
 import type { SelectImagesAsset } from "./assets/select-images";
@@ -109,13 +110,12 @@ export default function Captcha() {
     // stop timer from previous iteration's next button press or from the tutorial next button
     const elapsedTime: number = stopTimer() ?? 0;
 
-    // TODO need to update salary here
     // record this iteration's stats before the aggregation below, so the last
     // iteration is included in its own final average
     subMinigameStatsRef.current.push({
       accuracy: accuracy,
       timePerTask: elapsedTime,
-      salary: 0,
+      salary: calculateTaskSalary(accuracy, elapsedTime, maxIterations),
     });
 
     // we want to transition out of the minigame state

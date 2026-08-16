@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { GameManagerTransitions } from "@/app/game/state/game-manager";
 import { GameManagerContext } from "@/app/game/state/game-manager-context";
 import type { MinigameStats } from "@/app/game/types/minigame-stats";
+import { calculateTaskSalary } from "@/app/game/utils/salary-utils";
 import { formatTimer } from "@/lib/format-timer";
 import {
   type ToneRatingAsset,
@@ -95,13 +96,12 @@ export default function ToneRating() {
       selections,
     );
 
-    // TODO calculate salary
     // record this iteration's stats before the aggregation below, so the last
     // iteration is included in its own final average
     subMinigameStatsRef.current.push({
       accuracy,
       timePerTask: elapsedTime,
-      salary: 0,
+      salary: calculateTaskSalary(accuracy, elapsedTime, maxIterations),
     });
 
     // we want to transition out of the minigame state
