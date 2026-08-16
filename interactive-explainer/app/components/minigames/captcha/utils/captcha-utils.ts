@@ -1,5 +1,11 @@
-import { type SelectAllSquaresAsset, selectAllSquaresAssets } from "../assets/select-all-squares";
-import { type SelectImagesAsset, selectImagesAssets } from "../assets/select-images";
+import {
+  type SelectAllSquaresAsset,
+  selectAllSquaresAssets,
+} from "../assets/select-all-squares";
+import {
+  type SelectImagesAsset,
+  selectImagesAssets,
+} from "../assets/select-images";
 
 export type CaptchaIteration = {
   mode: CaptchaMode;
@@ -19,6 +25,12 @@ export function captchaModeToColumns(mode: CaptchaMode): number {
   }
 
   return 4; // default number of columns
+}
+
+export function initBooleanGrid(rows: number, columns: number): boolean[][] {
+  return Array.from({ length: rows }, () =>
+    Array.from({ length: columns }, () => false),
+  );
 }
 
 // this essentially just randomly generates a list of length maxIterations that
@@ -51,7 +63,7 @@ export function generateCaptchaIterations(maxIterations: number) {
     } else if (randomCaptchaMode === CaptchaMode.SELECT_IMAGES) {
       assetList = selectImagesAssets;
     } else {
-      console.error("Captcha component: invalid generated randomCaptchaMode")
+      console.error("Captcha component: invalid generated randomCaptchaMode");
     }
 
     // just the indices that are available according to the size of selectAllSquaresAssets

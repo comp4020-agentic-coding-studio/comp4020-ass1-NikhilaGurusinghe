@@ -13,41 +13,17 @@ export const selectImagesAssets: SelectImagesAsset[] = [
     imagePaths: [
       [
         `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
-      ],
-      [
-        `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
+        `${basePath}/images/test_image.png`,
         `${basePath}/images/cat.jpg`,
       ],
       [
+        `${basePath}/images/test_image.png`,
         `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
-      ],
-    ],
-    solutions: [
-      [true, true, true],
-      [true, true, true],
-      [true, true, true],
-    ],
-  },
-  {
-    imagePaths: [
-      [
-        `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
+        `${basePath}/images/test_image.png`,
       ],
       [
         `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
-      ],
-      [
-        `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
+        `${basePath}/images/test_image.png`,
         `${basePath}/images/cat.jpg`,
       ],
     ],
@@ -61,17 +37,41 @@ export const selectImagesAssets: SelectImagesAsset[] = [
     imagePaths: [
       [
         `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
-      ],
-      [
-        `${basePath}/images/cat.jpg`,
-        `${basePath}/images/cat.jpg`,
+        `${basePath}/images/test_image.png`,
         `${basePath}/images/cat.jpg`,
       ],
       [
+        `${basePath}/images/test_image.png`,
         `${basePath}/images/cat.jpg`,
+        `${basePath}/images/test_image.png`,
+      ],
+      [
         `${basePath}/images/cat.jpg`,
+        `${basePath}/images/test_image.png`,
+        `${basePath}/images/cat.jpg`,
+      ],
+    ],
+    solutions: [
+      [true, true, true],
+      [true, true, true],
+      [true, true, true],
+    ],
+  },
+  {
+    imagePaths: [
+      [
+        `${basePath}/images/cat.jpg`,
+        `${basePath}/images/test_image.png`,
+        `${basePath}/images/cat.jpg`,
+      ],
+      [
+        `${basePath}/images/test_image.png`,
+        `${basePath}/images/cat.jpg`,
+        `${basePath}/images/test_image.png`,
+      ],
+      [
+        `${basePath}/images/cat.jpg`,
+        `${basePath}/images/test_image.png`,
         `${basePath}/images/cat.jpg`,
       ],
     ],

@@ -10,25 +10,28 @@ export const selectAllSquaresAssets: SelectAllSquaresAsset[] = [
   {
     imagePath: `${basePath}/images/cat.jpg`,
     solutions: [
-      [true, true, true],
-      [true, true, true],
-      [true, true, true],
+      [true, true, true, true],
+      [true, true, true, true],
+      [true, true, true, true],
+      [true, true, true, true],
     ],
   },
   {
     imagePath: `${basePath}/images/cat.jpg`,
     solutions: [
-      [true, true, true],
-      [true, true, true],
-      [true, true, true],
+      [true, true, true, true],
+      [true, true, true, true],
+      [true, true, true, true],
+      [true, true, true, true],
     ],
   },
   {
     imagePath: `${basePath}/images/cat.jpg`,
     solutions: [
-      [true, true, true],
-      [true, true, true],
-      [true, true, true],
+      [true, true, true, true],
+      [true, true, true, true],
+      [true, true, true, true],
+      [true, true, true, true],
     ],
   },
 ];

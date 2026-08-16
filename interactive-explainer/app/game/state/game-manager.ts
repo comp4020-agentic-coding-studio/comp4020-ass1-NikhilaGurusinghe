@@ -12,7 +12,7 @@ export enum GameManagerStates {
   FAMILY_SCREEN = "FAMILY_SCREEN_STATE",
 }
 
-enum GameManagerTransitions {
+export enum GameManagerTransitions {
   NEXT = "NEXT_STATE_TRANSTION",
 }
 
