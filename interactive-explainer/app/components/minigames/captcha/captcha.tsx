@@ -54,32 +54,28 @@ export default function Captcha() {
   }
 
   // minigame orchestration
-  const [captchaIterations, setCaptchaIterations] = useState<
-    CaptchaIteration[] | null
-  >(null);
+  // i feel like captchIterations really shouldn't be a useState here
+  const captchaIterationsRef = useRef<
+    CaptchaIteration[]
+  >(generateCaptchaIterations(maxIterations));
   const [currIteration, setCurrIteration] = useState<number>(0);
   const [gridAnswers, setGridAnswers] = useState<boolean[][]>();
   const [isTutorialVisible, setIsTutorialVisible] = useState<boolean>(true);
 
   useEffect(() => {
-    const newCaptchaIterations = generateCaptchaIterations(maxIterations);
-    setCaptchaIterations(newCaptchaIterations);
-  }, []);
+    if (gridAnswers) return;
 
-  useEffect(() => {
-    if (!captchaIterations || gridAnswers) return;
-
-    const mode = captchaIterations[currIteration].mode;
+    const mode = captchaIterationsRef.current[currIteration].mode;
     const newColumns = captchaModeToColumns(mode);
     const newRows = captchaModeToColumns(mode);
 
     setGridAnswers(initBooleanGrid(newRows, newColumns));
-  }, [captchaIterations, currIteration, gridAnswers]);
+  }, [captchaIterationsRef.current, currIteration, gridAnswers]);
 
   // still not ready to render
-  if (!captchaIterations || !gridAnswers) return null;
+  if (!gridAnswers) return null;
 
-  const currMode: CaptchaMode = captchaIterations[currIteration].mode;
+  const currMode: CaptchaMode = captchaIterationsRef.current[currIteration].mode;
   const columns: number = captchaModeToColumns(currMode);
   const rows: number = columns;
   const subMinigameStats: MinigameStats[] = [];
@@ -97,7 +93,7 @@ export default function Captcha() {
   }
 
   function handleNextClick(): void {
-    if (!captchaIterations || !gridAnswers) return;
+    if (!gridAnswers) return;
 
     // TODO test this
     // we want to transition out of the minigame state
@@ -130,7 +126,7 @@ export default function Captcha() {
 
     // calculating accuracy
     let accuracy: number = 0;
-    captchaIterations[currIteration].assets.solutions.forEach(
+    captchaIterationsRef.current[currIteration].assets.solutions.forEach(
       (solutionRow: boolean[], rowIndex: number) => {
         solutionRow.forEach((solution: boolean, columnIndex: number) => {
           if (solution === gridAnswers[rowIndex][columnIndex]) {
@@ -156,12 +152,10 @@ export default function Captcha() {
     setCurrIteration((prevVal: number) => {
       const nextIteration: number = Math.min(prevVal + 1, maxIterations - 1);
 
-      if (captchaIterations) {
-        const nextMode = captchaIterations[nextIteration].mode;
-        const newColumns = captchaModeToColumns(nextMode);
-        const newRows = captchaModeToColumns(nextMode);
-        setGridAnswers(initBooleanGrid(newRows, newColumns));
-      }
+      const nextMode = captchaIterationsRef.current[nextIteration].mode;
+      const newColumns = captchaModeToColumns(nextMode);
+      const newRows = captchaModeToColumns(nextMode);
+      setGridAnswers(initBooleanGrid(newRows, newColumns));
 
       return nextIteration;
     });
@@ -177,7 +171,7 @@ export default function Captcha() {
         {currMode === CaptchaMode.SELECT_ALL_SQUARES && (
           <div>
             Select all squares with <br />{" "}
-            {captchaIterations[currIteration].assets.objectToIdentify}
+            {captchaIterationsRef.current[currIteration].assets.objectToIdentify}
             <br />
             If there are none, click next
           </div>
@@ -185,7 +179,7 @@ export default function Captcha() {
         {currMode === CaptchaMode.SELECT_IMAGES && (
           <div>
             Select all images with <br />{" "}
-            {captchaIterations[currIteration].assets.objectToIdentify}
+            {captchaIterationsRef.current[currIteration].assets.objectToIdentify}
           </div>
         )}
 
@@ -208,7 +202,7 @@ export default function Captcha() {
                     onClick={() => handleGridClick(x, y)}
                     className={`bg-no-repeat cursor-pointer bg-cover transition-transform m-0.5 ${gridAnswers[y][x] ? "scale-80" : "scale-100"} ${x === 0 && y === 0 ? "rounded-tl-xl" : undefined} ${x === 0 && y === rows - 1 ? "rounded-bl-xl" : undefined} ${x === columns - 1 && y === rows - 1 ? "rounded-br-xl" : undefined} ${x === columns - 1 && y === 0 ? "rounded-tr-xl" : undefined}`}
                     style={{
-                      backgroundImage: `url(${(captchaIterations[currIteration].assets as SelectAllSquaresAsset).imagePath})`,
+                      backgroundImage: `url(${(captchaIterationsRef.current[currIteration].assets as SelectAllSquaresAsset).imagePath})`,
                       backgroundSize: `${columns * 100}% ${rows * 100}%`,
                       backgroundPosition: `${(x / (columns - 1)) * 100}% ${(y / (rows - 1)) * 100}%`,
                     }}
@@ -234,7 +228,7 @@ export default function Captcha() {
                     onClick={() => handleGridClick(x, y)}
                     className={`bg-no-repeat cursor-pointer bg-cover transition-transform m-0.5 ${gridAnswers[y][x] ? "scale-90" : "scale-100"} ${x === 0 && y === 0 ? "rounded-tl-xl" : undefined} ${x === 0 && y === rows - 1 ? "rounded-bl-xl" : undefined} ${x === columns - 1 && y === rows - 1 ? "rounded-br-xl" : undefined} ${x === columns - 1 && y === 0 ? "rounded-tr-xl" : undefined}`}
                     style={{
-                      backgroundImage: `url(${(captchaIterations[currIteration].assets as SelectImagesAsset).imagePaths[y][x]})`,
+                      backgroundImage: `url(${(captchaIterationsRef.current[currIteration].assets as SelectImagesAsset).imagePaths[y][x]})`,
                       backgroundSize: `${columns * 100}% ${rows * 100}%`,
                       backgroundPosition: `${(x / (columns - 1)) * 100}% ${(y / (rows - 1)) * 100}%`,
                     }}
