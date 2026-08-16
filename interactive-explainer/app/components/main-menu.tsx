@@ -11,10 +11,10 @@ export default function MainMenu() {
       <div>Main Menu</div>
       <button
         type="button"
-        className="cursor-pointer"
+        className="cursor-pointer rounded-md text-white w-full py-4 hover:bg-(--highlight-dark) bg-(--highlight-colour)"
         onClick={() => actorRef.send({ type: GameManagerTransitions.NEXT })}
       >
-        start
+        Agree to terms and proceed to task
       </button>
     </div>
   );

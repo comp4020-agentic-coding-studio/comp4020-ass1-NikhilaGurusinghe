@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type PointerEvent, useRef, useState } from "react";
+import { type PointerEvent, useEffect, useRef, useState } from "react";
 import { GameManagerTransitions } from "@/app/game/state/game-manager";
 import { GameManagerContext } from "@/app/game/state/game-manager-context";
 import type { MinigameStats } from "@/app/game/types/minigame-stats";
@@ -96,6 +96,25 @@ export default function BoundingBox() {
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const currAsset: BoundingBoxAsset =
     boundingBoxAssetsRef.current[currIteration];
+
+  // drives the container's aspect-ratio below, so it always matches the
+  // image's own shape exactly and object-contain never has to letterbox it -
+  // otherwise a click's percent-of-container position wouldn't line up with
+  // percent-of-image, which is the space solutions are authored in. Reset
+  // when the asset changes so a new image doesn't briefly render at the
+  // previous one's ratio before its own onLoad fires.
+  const [naturalSize, setNaturalSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+  useEffect(() => {
+    setNaturalSize(null);
+  }, [currAsset.imagePath]);
+
+  function handleImageLoad(event: React.SyntheticEvent<HTMLImageElement>): void {
+    const img: HTMLImageElement = event.currentTarget;
+    setNaturalSize({ width: img.naturalWidth, height: img.naturalHeight });
+  }
 
   // accumulated across the whole game (not reset on re-render), so the final
   // aggregate at the last iteration averages over all iterations, not just one
@@ -375,7 +394,12 @@ export default function BoundingBox() {
       <div className="w-full bg-white p-1 rounded-xl">
         <div
           ref={imageContainerRef}
-          className="relative w-full aspect-square cursor-crosshair"
+          className="relative w-full cursor-crosshair"
+          style={{
+            aspectRatio: naturalSize
+              ? `${naturalSize.width} / ${naturalSize.height}`
+              : "1",
+          }}
           onPointerDown={handleContainerPointerDown}
         >
           <Image
@@ -383,6 +407,7 @@ export default function BoundingBox() {
             alt=""
             fill
             className="object-contain pointer-events-none"
+            onLoad={handleImageLoad}
           />
 
           {draftBox && (
