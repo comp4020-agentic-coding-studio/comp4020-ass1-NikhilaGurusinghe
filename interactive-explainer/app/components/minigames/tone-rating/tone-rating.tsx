@@ -26,7 +26,7 @@ const RATING_VALUES: number[] = Array.from(
 );
 
 export default function ToneRating() {
-  const maxIterations: number = 3;
+  const maxIterations: number = 5;
 
   // our state machine
   const actorRef = GameManagerContext.useActorRef();

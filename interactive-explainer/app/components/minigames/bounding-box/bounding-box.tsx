@@ -52,7 +52,7 @@ function cornersToBox(
 }
 
 export default function BoundingBox() {
-  const maxIterations: number = 3;
+  const maxIterations: number = 5;
 
   // our state machine
   const actorRef = GameManagerContext.useActorRef();
