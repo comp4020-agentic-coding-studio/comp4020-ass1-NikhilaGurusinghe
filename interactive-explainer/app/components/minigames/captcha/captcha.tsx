@@ -19,7 +19,7 @@ import { formatTimer } from "@/lib/format-timer";
 import type { SelectImagesAsset } from "./assets/select-images";
 
 export default function Captcha() {
-  const maxIterations: number = 3;
+  const maxIterations: number = 5;
 
   // our state machine
   const actorRef = GameManagerContext.useActorRef();
@@ -245,8 +245,6 @@ export default function Captcha() {
                     className={`bg-no-repeat cursor-pointer bg-cover transition-transform m-0.5 ${gridAnswers[y][x] ? "scale-90" : "scale-100"} ${x === 0 && y === 0 ? "rounded-tl-xl" : undefined} ${x === 0 && y === rows - 1 ? "rounded-bl-xl" : undefined} ${x === columns - 1 && y === rows - 1 ? "rounded-br-xl" : undefined} ${x === columns - 1 && y === 0 ? "rounded-tr-xl" : undefined}`}
                     style={{
                       backgroundImage: `url(${(captchaAssetsRef.current[currIteration].assets as SelectImagesAsset).imagePaths[y][x]})`,
-                      backgroundSize: `${columns * 100}% ${rows * 100}%`,
-                      backgroundPosition: `${(x / (columns - 1)) * 100}% ${(y / (rows - 1)) * 100}%`,
                     }}
                   >
                     {gridAnswers[y][x] && (

@@ -9,6 +9,7 @@ export default function MainMenu() {
   return (
     <div className="w-full flex flex-col gap-4">
       <h1 className="text-2xl font-bold text-left">Exploited</h1>
+      <h2 className="text-xl">A game about the people who label the data that powers AI</h2>
       <p>
         The vast amounts of data that machine-learning algorithms require during
         training, necessitates an unprecedented, planetary-scale extraction of

@@ -44,39 +44,50 @@ export function generateCaptchaIterations(maxIterations: number) {
   allSeenAssetIndices.set(CaptchaMode.SELECT_IMAGES, new Set<number>());
   const returnMe: CaptchaIteration[] = [];
 
+  function assetListForMode(
+    mode: CaptchaMode,
+  ): SelectAllSquaresAsset[] | SelectImagesAsset[] {
+    if (mode === CaptchaMode.SELECT_ALL_SQUARES) return selectAllSquaresAssets;
+    if (mode === CaptchaMode.SELECT_IMAGES) return selectImagesAssets;
+
+    console.error("Captcha component: invalid generated randomCaptchaMode");
+    return [];
+  }
+
   for (let index = 0; index < maxIterations; index++) {
-    const allCaptchaMode: CaptchaMode[] = Object.values(CaptchaMode).filter(
-      (value) => typeof value === "number",
-    ) as CaptchaMode[];
+    // only offer modes that still have an unseen asset, so a mode with a
+    // small pool (e.g. select-images) can't get picked more times than it
+    // has distinct assets to give out
+    const allCaptchaMode: CaptchaMode[] = (
+      Object.values(CaptchaMode).filter(
+        (value) => typeof value === "number",
+      ) as CaptchaMode[]
+    ).filter((mode: CaptchaMode) => {
+      const seen: Set<number> = allSeenAssetIndices.get(mode) as Set<number>;
+      return assetListForMode(mode).length > seen.size;
+    });
+
+    if (allCaptchaMode.length === 0) {
+      console.error("Captcha component: no unused assets left in any mode");
+      break;
+    }
+
     const randomCaptchaMode: CaptchaMode =
       allCaptchaMode[Math.floor(Math.random() * allCaptchaMode.length)];
 
-    // TODO this "as" conversion could be a problem, but im just assuming its good cause i
-    // manually setup all the arrays for each enum val
     const seenIndicies: Set<number> = allSeenAssetIndices.get(
       randomCaptchaMode,
     ) as Set<number>;
-
-    let assetList: SelectAllSquaresAsset[] | SelectImagesAsset[] = [];
-    if (randomCaptchaMode === CaptchaMode.SELECT_ALL_SQUARES) {
-      assetList = selectAllSquaresAssets;
-    } else if (randomCaptchaMode === CaptchaMode.SELECT_IMAGES) {
-      assetList = selectImagesAssets;
-    } else {
-      console.error("Captcha component: invalid generated randomCaptchaMode");
-    }
+    const assetList = assetListForMode(randomCaptchaMode);
 
     // just the indices that are available according to the size of selectAllSquaresAssets
     const availableIndices = assetList
       .map((_, index: number) => index)
       .filter((index: number) => !seenIndicies.has(index));
 
-    if (availableIndices.length === 0) {
-      console.error("Captcha component: no unused assets left");
-    }
-
     const randomAssetIndex: number =
       availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    seenIndicies.add(randomAssetIndex);
 
     returnMe.push({
       mode: randomCaptchaMode,
