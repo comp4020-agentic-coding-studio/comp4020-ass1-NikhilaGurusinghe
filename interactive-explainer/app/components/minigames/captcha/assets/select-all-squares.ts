@@ -9,33 +9,64 @@ export type SelectAllSquaresAsset = {
 
 export const selectAllSquaresAssets: SelectAllSquaresAsset[] = [
   {
-    imagePath: `${basePath}/images/cat.jpg`,
-    objectToIdentify: "cat",
+    imagePath: `${basePath}/images/select_all_squares_1.png`,
+    objectToIdentify: "traffic lights",
     solutions: [
-      [true, true, true, true],
-      [true, true, true, true],
-      [true, true, true, true],
-      [true, true, true, true],
+      [true, true, false, false],
+      [false, false, false, true],
+      [false, false, false, true],
+      [false, false, false, false],
     ],
   },
   {
-    imagePath: `${basePath}/images/cat.jpg`,
-    objectToIdentify: "cat",
+    imagePath: `${basePath}/images/select_all_squares_2.png`,
+    objectToIdentify: "road signage",
     solutions: [
-      [true, true, true, true],
-      [true, true, true, true],
-      [true, true, true, true],
-      [true, true, true, true],
+      [false, true, false, false],
+      [true, true, true, false],
+      [false, true, true, false],
+      [false, false, false, false],
     ],
   },
   {
-    imagePath: `${basePath}/images/cat.jpg`,
-    objectToIdentify: "cat",
+    imagePath: `${basePath}/images/select_all_squares_3.png`,
+    objectToIdentify: "traffic lights",
     solutions: [
+      [false, false, false, true],
+      [true, false, false, false],
+      [true, false, false, false],
+      [false, false, false, false],
+    ],
+  },
+  {
+    imagePath: `${basePath}/images/select_all_squares_4.png`,
+    objectToIdentify: "traffic lights",
+    solutions: [
+      [false, false, false, false],
+      [true, false, true, true],
+      [false, false, false, false],
+      [false, false, false, false],
+
+    ],
+  },
+  {
+    imagePath: `${basePath}/images/select_all_squares_5.png`,
+    objectToIdentify: "road signage",
+    solutions: [
+      [false, false, false, false],
+      [true, true, false, false],
       [true, true, true, true],
-      [true, true, true, true],
-      [true, true, true, true],
-      [true, true, true, true],
+      [false, false, false, false],
+    ],
+  },
+  {
+    imagePath: `${basePath}/images/select_all_squares_6.png`,
+    objectToIdentify: "speed signs",
+    solutions: [
+      [false, false, false, false],
+      [true, false, false, false],
+      [false, false, false, false],
+      [false, false, false, false],
     ],
   },
 ];
